@@ -1,363 +1,142 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/User.Master" AutoEventWireup="true" CodeBehind="Logout.aspx.cs" Inherits="WebApplication2.Logout" %>
 
-<!DOCTYPE html>
 
-<html>
-<head runat="server">
-
-    <title>Logout - CinePulse</title>
-
-    <meta charset="utf-8" />
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
+<asp:Content ID="Content1"
+    ContentPlaceHolderID="head"
+    runat="server">
 
     <style>
 
-        * {
-            margin: 0;
-            padding: 0;
+        .logout-page {
+            min-height: 100vh;
+            background: #111111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            color: #ffffff;
+        }
+
+        .logout-card {
+            width: 285px;
+            background: #202020;
+            border: 1px solid #303030;
+            border-radius: 7px;
+            padding: 24px;
+            text-align: center;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        }
+
+        .logout-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            background: #292929;
+            border: 1px solid #3a3a3a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffaaa0;
+            font-size: 17px;
+        }
+
+        .logout-card h2 {
+            font-size: 13px;
+            color: #eeeeee;
+            margin: 0 0 8px;
+        }
+
+        .logout-card p {
+            font-size: 7px;
+            line-height: 1.5;
+            color: #888888;
+            margin: 0 0 18px;
+        }
+
+        .logout-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .logout-btn {
+            flex: 1;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 7px;
             box-sizing: border-box;
         }
 
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #111111;
-            color: #ffffff;
-            overflow: hidden;
-        }
-
-
-        /* =========================================
-           BACKGROUND
-        ========================================= */
-
-        .logout-page {
-
-            width: 100%;
-            height: 100vh;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                radial-gradient(
-                    circle at center,
-                    #252525 0%,
-                    #151515 40%,
-                    #0b0b0b 100%
-                );
-        }
-
-
-        /* =========================================
-           LOGOUT CARD
-        ========================================= */
-
-        .logout-card {
-
-            width: 320px;
-
-            padding: 25px 22px 22px;
-
+        .cancel-btn {
             background: #202020;
-
-            border: 1px solid #333333;
-
-            border-radius: 7px;
-
-            text-align: center;
-
-            box-shadow:
-                0 20px 50px rgba(0,0,0,.65);
+            border: 1px solid #3b3b3b;
+            color: #dddddd;
         }
 
-
-        /* =========================================
-           ICON
-        ========================================= */
-
-        .logout-icon {
-
-            width: 46px;
-            height: 46px;
-
-            margin: 0 auto 15px;
-
-            border-radius: 50%;
-
-            background: #302020;
-
-            border: 1px solid #4a2929;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            color: #ff7777;
-
-            font-size: 22px;
+        .cancel-btn:hover {
+            color: #ffffff;
+            background: #292929;
         }
 
-
-        /* =========================================
-           TITLE
-        ========================================= */
-
-        .logout-title {
-
-            color: #eeeeee;
-
-            font-size: 17px;
-
-            font-weight: 600;
-
-            margin-bottom: 10px;
-        }
-
-
-        /* =========================================
-           DESCRIPTION
-        ========================================= */
-
-        .logout-description {
-
-            color: #999999;
-
-            font-size: 11px;
-
-            line-height: 17px;
-
-            max-width: 250px;
-
-            margin: 0 auto 20px;
-        }
-
-
-        /* =========================================
-           BUTTONS
-        ========================================= */
-
-        .logout-buttons {
-
-            display: flex;
-
-            justify-content: center;
-
-            gap: 9px;
-        }
-
-
-        .cancel-button {
-
-            width: 110px;
-
-            height: 34px;
-
-            background: #202020;
-
-            border: 1px solid #444444;
-
-            border-radius: 4px;
-
-            color: #cccccc;
-
-            font-size: 10px;
-
-            cursor: pointer;
-        }
-
-        .cancel-button:hover {
-
-            background: #2b2b2b;
-
+        .confirm-btn {
+            background: #ed101c;
+            border: 1px solid #ed101c;
             color: #ffffff;
         }
 
-
-        .logout-button {
-
-            width: 110px;
-
-            height: 34px;
-
-            background: #ff171f;
-
-            border: 1px solid #ff171f;
-
-            border-radius: 4px;
-
+        .confirm-btn:hover {
+            background: #ff1d29;
             color: #ffffff;
-
-            font-size: 10px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-        }
-
-        .logout-button:hover {
-
-            background: #df1118;
-
-            border-color: #df1118;
-        }
-
-
-        /* =========================================
-           FOOTER
-        ========================================= */
-
-        .logout-footer {
-
-            margin-top: 18px;
-
-            color: #555555;
-
-            font-size: 7px;
-
-            letter-spacing: .8px;
-        }
-
-
-        /* =========================================
-           MOBILE
-        ========================================= */
-
-        @media screen and (max-width: 500px) {
-
-            .logout-card {
-
-                width: 290px;
-
-            }
-
         }
 
     </style>
 
-</head>
+</asp:Content>
 
 
-<body>
-
-<form id="logoutForm" runat="server">
-
+<asp:Content ID="Content2"
+    ContentPlaceHolderID="MainContent"
+    runat="server">
 
     <div class="logout-page">
 
-
         <div class="logout-card">
 
-
-            <!-- ICON -->
-
             <div class="logout-icon">
-                ⇥
+                <i class="fa-solid fa-right-from-bracket"></i>
             </div>
 
+            <h2>
+                LogOut of Cineplus
+            </h2>
 
-            <!-- TITLE -->
-
-            <div class="logout-title">
-                LogOut of CinePulse
-            </div>
-
-
-            <!-- DESCRIPTION -->
-
-            <div class="logout-description">
-
+            <p>
                 Are you sure you want to log out?
-
-                You will need to sign back in to
-                access your profile and tickets.
-
-            </div>
-
-
-            <!-- BUTTONS -->
+                You will need to sign back in to access
+                your profile and tickets.
+            </p>
 
             <div class="logout-buttons">
 
-
-                <!-- CANCEL -->
-
-                <button type="button"
-                        class="cancel-button"
-                        onclick="goBack();">
-
+                <a href="UserDashboard.aspx"
+                   class="logout-btn cancel-btn">
                     Cancel
+                </a>
 
-                </button>
-
-
-                <!-- LOGOUT -->
-
-                <button type="button"
-                        class="logout-button"
-                        onclick="logoutUser();">
-
+                <a href="Login.aspx"
+                   class="logout-btn confirm-btn">
                     Logout
-
-                </button>
-
+                </a>
 
             </div>
-
-
-            <div class="logout-footer">
-                CINEPULSE GLOBAL CONTROL CENTER
-            </div>
-
 
         </div>
 
     </div>
 
-
-    <script type="text/javascript">
-
-
-        /* =====================================
-           CANCEL
-        ===================================== */
-
-        function goBack() {
-
-            window.history.back();
-
-        }
-
-
-        /* =====================================
-           LOGOUT
-        ===================================== */
-
-        function logoutUser() {
-
-            /*
-             * Login page પર redirect
-             */
-
-            window.location.href =
-                "Login.aspx";
-
-        }
-
-    </script>
-
-
-</form>
-
-</body>
-
-</html>
+</asp:Content>
