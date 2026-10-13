@@ -1,4 +1,6 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true"
+    CodeBehind="Login.aspx.cs"
+    Inherits="WebApplication1.Login" %>
 
 <!DOCTYPE html>
 <html>
@@ -9,17 +11,17 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; }
+        html, body { width: 100%; min-height: 100%; }
+
         body {
             font-family: Georgia, "Times New Roman", serif;
             background: #0d0f10;
-            color: #ffffff;
-            overflow: hidden;
+            color: white;
         }
 
         .login-page {
             width: 100%;
-            height: 100vh;
+            min-height: 100vh;
             position: relative;
             display: flex;
             align-items: center;
@@ -29,26 +31,27 @@
             background: linear-gradient(90deg, rgba(5,8,10,.82), rgba(8,11,13,.68), rgba(8,10,11,.92));
         }
 
-        /* SERVER ROOM BACKGROUND */
         .server-background {
             position: absolute;
             inset: 0;
             overflow: hidden;
-            z-index: 0;
             background:
                 radial-gradient(ellipse at 18% 45%, rgba(80,25,25,.45), transparent 34%),
                 radial-gradient(ellipse at 72% 20%, rgba(30,40,45,.45), transparent 38%),
                 linear-gradient(90deg, #0b0f11, #111619, #0b0f11);
         }
+
         .server-rack {
             position: absolute;
-            top: -20px; bottom: -20px;
+            top: -20px;
+            bottom: -20px;
             width: 145px;
             background: repeating-linear-gradient(180deg, #202628 0px, #202628 8px, #070909 9px, #070909 14px);
             border-left: 3px solid #20292d;
             border-right: 3px solid #050606;
             box-shadow: inset 0 0 35px rgba(0,0,0,.9), 10px 0 25px rgba(0,0,0,.45);
         }
+
         .rack-1 { left: 25px; transform: perspective(500px) rotateY(18deg); }
         .rack-2 { left: 170px; transform: perspective(500px) rotateY(13deg); }
         .rack-3 { left: 315px; transform: perspective(500px) rotateY(10deg); }
@@ -57,8 +60,10 @@
         .server-rack:before {
             content: "";
             position: absolute;
-            left: 16px; top: 50px;
-            width: 5px; height: 75%;
+            left: 16px;
+            top: 50px;
+            width: 5px;
+            height: 75%;
             opacity: .7;
             background: repeating-linear-gradient(180deg, #681515 0px, #681515 3px, transparent 3px, transparent 18px);
             box-shadow: 32px 0 0 rgba(90,25,20,.45), 65px 0 0 rgba(60,25,21,.35), 95px 0 0 rgba(55,30,24,.30);
@@ -68,181 +73,174 @@
             position: absolute;
             inset: 0;
             background: radial-gradient(ellipse at center, transparent 10%, rgba(0,0,0,.25) 50%, rgba(0,0,0,.75) 100%);
-            backdrop-filter: blur(2px);
         }
 
-        /* LOGIN CARD */
         .login-card {
             position: relative;
             z-index: 10;
-            width: 310px;
-            padding: 22px 19px 20px;
-            background: rgba(17,17,17,.95);
+            width: 350px;
+            max-width: calc(100% - 30px);
+            padding: 28px 24px;
+            background: rgba(17,17,17,.96);
             border: 1px solid #303030;
             border-radius: 5px;
-            box-shadow: 0 20px 50px rgba(0,0,0,.75), 0 0 35px rgba(0,0,0,.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,.75);
         }
 
-        /* LOGO */
         .brand {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
-            margin-bottom: 13px;
+            gap: 8px;
+            margin-bottom: 20px;
         }
-        .brand-icon { color: #ff171f; font-size: 17px; line-height: 1; }
-        .brand-name { color: #e5e5e5; font-size: 17px; font-weight: bold; }
 
-        /* TITLE */
+        .brand-icon { color: #ff171f; font-size: 22px; }
+        .brand-name { color: #e5e5e5; font-size: 24px; font-weight: bold; }
+
         .login-title {
             text-align: center;
             color: #eeeeee;
-            font-size: 13px;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 7px;
+            margin-bottom: 8px;
         }
+
         .login-subtitle {
             text-align: center;
             color: #8d7e7e;
-            font-size: 7px;
-            line-height: 11px;
-            margin-bottom: 18px;
+            font-size: 11px;
+            line-height: 17px;
+            margin-bottom: 25px;
         }
 
-        /* FORM */
-        .form-group { margin-bottom: 10px; }
-        .form-label-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        .form-label { color: #aaa0a0; font-size: 7px; font-weight: bold; }
+        .form-group { margin-bottom: 18px; }
 
-        .forgot-link {
-            color: #f0c300;
-            font-size: 6px;
-            text-decoration: none;
-            cursor: pointer;
+        .form-label {
+            display: block;
+            color: #aaa0a0;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
-        .forgot-link:hover { color: #ffe46b; text-decoration: underline; }
 
-        /* INPUT */
-        .input-wrapper { position: relative; width: 100%; }
-        .input-icon {
-            position: absolute;
-            left: 8px; top: 50%;
-            transform: translateY(-50%);
-            color: #686868;
-            font-size: 10px;
-            pointer-events: none;
-        }
         .login-input {
             width: 100%;
-            height: 28px;
-            padding: 0 9px 0 26px;
+            height: 42px;
+            padding: 0 12px;
             background: #191919;
             border: 1px solid #303030;
-            border-radius: 2px;
+            border-radius: 3px;
             outline: none;
             color: #dddddd;
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 8px;
-        }
-        .login-input::placeholder { color: #5f5f5f; }
-        .login-input:focus {
-            border-color: #555555;
-            box-shadow: 0 0 0 1px rgba(255,23,31,.08);
+            font-size: 12px;
         }
 
-        /* PASSWORD */
-        .password-wrapper { position: relative; }
-        .password-toggle {
-            position: absolute;
-            right: 8px; top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #777777;
-            font-size: 9px;
-            cursor: pointer;
-            padding: 2px;
-        }
-        .password-toggle:hover { color: #cccccc; }
+        .login-input:focus { border-color: #777777; }
 
-        /* LOGIN BUTTON */
+        .validator {
+            display: block;
+            color: #ff7777;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
         .login-button {
             width: 100%;
-            height: 26px;
-            margin-top: 7px;
+            min-height: 42px;
+            margin-top: 8px;
             background: #ff1018;
             border: 1px solid #ff1018;
             border-radius: 3px;
-            color: #ffffff;
+            color: white;
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 8px;
+            font-size: 13px;
             font-weight: bold;
             cursor: pointer;
-            transition: .2s;
         }
+
         .login-button:hover {
             background: #df0d14;
             border-color: #df0d14;
-            box-shadow: 0 5px 15px rgba(255,16,24,.25);
         }
-        .login-button:active { transform: translateY(1px); }
 
-        /* MESSAGE */
+        /* ⭐ FORGOT PASSWORD */
+        .forgot-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .forgot-link {
+            color: #c4a0a0;
+            font-size: 11px;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            transition: 0.2s;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .forgot-link:hover {
+            color: #ffc3b9;
+            background: rgba(255, 195, 185, 0.08);
+            text-decoration: none;
+        }
+
+        .forgot-link-icon {
+            font-size: 12px;
+            color: #ff7777;
+        }
+
         .login-message {
-            display: none;
+            display: block;
             text-align: center;
-            color: #78d99a;
-            font-size: 7px;
-            margin-top: 8px;
+            color: #ff7777;
+            font-size: 12px;
+            margin-top: 14px;
         }
 
-        /* FOOTER */
         .login-footer {
             position: absolute;
             z-index: 10;
-            left: 0; right: 0;
-            bottom: 11px;
+            left: 0;
+            right: 0;
+            bottom: 20px;
             text-align: center;
         }
-        .footer-title {
-            color: #514848;
-            font-size: 6px;
-            letter-spacing: 1px;
-            margin-bottom: 7px;
-        }
-        .footer-links {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .footer-links a { color: #6b5f5f; font-size: 6px; text-decoration: none; }
-        .footer-links a:hover { color: #aaa0a0; }
-        .footer-separator { color: #4c4444; font-size: 6px; }
 
-        /* RESPONSIVE */
-        @media screen and (max-width:600px) {
-            .login-card { width: 300px; }
-            .server-rack { opacity: .5; }
+        .footer-title {
+            color: #756565;
+            font-size: 10px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
-        @media screen and (max-height:600px) {
-            .login-card { transform: scale(.88); }
-            .login-footer { bottom: 5px; }
+
+        .footer-links { color: #6b5f5f; font-size: 10px; }
+
+        @media screen and (max-width: 600px) {
+            .server-rack { opacity: .5; }
+            .login-card { padding: 24px 20px; }
+            .login-footer { bottom: 8px; }
+        }
+
+        @media screen and (max-height: 650px) {
+            .login-page { min-height: 650px; }
+            .login-footer { display: none; }
         }
     </style>
 </head>
 
 <body>
-<form id="loginForm" runat="server">
+<form id="form1" runat="server">
+
     <div class="login-page">
 
-        <!-- BACKGROUND -->
         <div class="server-background">
             <div class="server-rack rack-1"></div>
             <div class="server-rack rack-2"></div>
@@ -251,110 +249,91 @@
             <div class="background-blur"></div>
         </div>
 
-        <!-- LOGIN CARD -->
         <div class="login-card">
 
-            <!-- LOGO -->
             <div class="brand">
                 <span class="brand-icon">▮▮▮</span>
                 <span class="brand-name">CinePulse</span>
             </div>
 
-            <!-- TITLE -->
             <div class="login-title">Secure Admin Access</div>
-            <div class="login-subtitle">Authenticate to access the global operations console.</div>
 
-            <!-- EMAIL -->
-            <div class="form-group">
-                <div class="form-label-row">
-                    <label class="form-label">Admin Mail</label>
-                </div>
-                <div class="input-wrapper">
-                    <span class="input-icon">✉</span>
-                    <input type="email" id="adminEmail" class="login-input" placeholder="sysadmin@cinepulse.global" autocomplete="username" />
-                </div>
+            <div class="login-subtitle">
+                Authenticate to access the global operations console.
             </div>
 
-            <!-- PASSWORD -->
+            <!-- ADMIN EMAIL -->
             <div class="form-group">
-                <div class="form-label-row">
-                    <label class="form-label">Security Clearance (Password)</label>
-                    <a href="ForgotPassword.aspx" class="forgot-link">Forgot Password?</a>
-                </div>
-                <div class="input-wrapper password-wrapper">
-                    <span class="input-icon">▣</span>
-                    <input type="password" id="adminPassword" class="login-input" placeholder="••••••••••••" autocomplete="current-password" />
-                    <button type="button" class="password-toggle" onclick="togglePassword();" id="passwordToggle">◉</button>
-                </div>
+                <asp:Label ID="lblEmail" runat="server" CssClass="form-label"
+                    AssociatedControlID="txtAdminEmail" Text="Admin Mail"></asp:Label>
+
+                <asp:TextBox ID="txtAdminEmail" runat="server" CssClass="login-input"
+                    TextMode="Email" MaxLength="100" placeholder="admin@cinepulse.com"></asp:TextBox>
+
+                <asp:RequiredFieldValidator ID="rfvEmail" runat="server"
+                    ControlToValidate="txtAdminEmail"
+                    ErrorMessage="Please enter your admin email."
+                    CssClass="validator" Display="Dynamic"
+                    EnableClientScript="false" ValidationGroup="AdminLogin"></asp:RequiredFieldValidator>
+
+                <asp:RegularExpressionValidator ID="revEmail" runat="server"
+                    ControlToValidate="txtAdminEmail"
+                    ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+                    ErrorMessage="Please enter a valid email address."
+                    CssClass="validator" Display="Dynamic"
+                    EnableClientScript="false" ValidationGroup="AdminLogin"></asp:RegularExpressionValidator>
             </div>
 
-            <!-- LOGIN -->
-            <button type="button" class="login-button" onclick="loginAdmin();">
-                Sign In to Console&nbsp; ↪
-            </button>
+            <!-- ADMIN PASSWORD -->
+            <div class="form-group">
+                <asp:Label ID="lblPassword" runat="server" CssClass="form-label"
+                    AssociatedControlID="txtAdminPassword"
+                    Text="Security Clearance (Password)"></asp:Label>
 
-            <div id="loginMessage" class="login-message"></div>
+                <asp:TextBox ID="txtAdminPassword" runat="server" CssClass="login-input"
+                    TextMode="Password" MaxLength="100" placeholder="Enter your password"></asp:TextBox>
+
+                <asp:RequiredFieldValidator ID="rfvPassword" runat="server"
+                    ControlToValidate="txtAdminPassword"
+                    ErrorMessage="Please enter your password."
+                    CssClass="validator" Display="Dynamic"
+                    EnableClientScript="false" ValidationGroup="AdminLogin"></asp:RequiredFieldValidator>
+            </div>
+
+            <!-- LOGIN BUTTON -->
+            <asp:Button ID="btnAdminLogin" runat="server"
+                Text="Sign In to Console  →"
+                CssClass="login-button"
+                ValidationGroup="AdminLogin"
+                CausesValidation="true"
+                OnClick="btnAdminLogin_Click" />
+
+            <!-- ⭐ FORGOT PASSWORD LINK -->
+            <div class="forgot-row">
+                <a href="ForgotPassword.aspx" class="forgot-link">
+                    <span class="forgot-link-icon">🔑</span>
+                    Forgot your password?
+                </a>
+            </div>
+
+            <!-- SERVER-SIDE MESSAGE -->
+            <asp:Label ID="lblMessage" runat="server"
+                CssClass="login-message"
+                EnableViewState="false"></asp:Label>
 
         </div>
 
-        <!-- FOOTER -->
         <div class="login-footer">
-            <div class="footer-title">SECURE ADMIN GATEWAY V2.4</div>
+            <div class="footer-title">SECURE ADMIN GATEWAY</div>
             <div class="footer-links">
-                <a href="javascript:void(0);">Security Policy</a>
-                <span class="footer-separator">•</span>
-                <a href="javascript:void(0);">System Status</a>
-                <span class="footer-separator">•</span>
-                <a href="javascript:void(0);">Support</a>
+                Security Policy &nbsp; • &nbsp;
+                System Status &nbsp; • &nbsp;
+                Support
             </div>
         </div>
 
     </div>
 
-    <!-- JAVASCRIPT -->
-    <script type="text/javascript">
-
-        function loginAdmin() {
-            var email = document.getElementById("adminEmail").value.trim();
-            var password = document.getElementById("adminPassword").value;
-            var message = document.getElementById("loginMessage");
-
-            if (email === "" || password === "") {
-                message.innerHTML = "Please enter your admin email and password.";
-                message.style.color = "#ff7777";
-                message.style.display = "block";
-                return;
-            }
-
-            message.innerHTML = "Sign in successful. Redirecting...";
-            message.style.color = "#78d99a";
-            message.style.display = "block";
-
-            setTimeout(function () {
-                window.location.href = "home.aspx";
-            }, 400);
-        }
-
-        function togglePassword() {
-            var password = document.getElementById("adminPassword");
-            var button = document.getElementById("passwordToggle");
-
-            if (password.type === "password") {
-                password.type = "text";
-                button.innerHTML = "◉";
-            } else {
-                password.type = "password";
-                button.innerHTML = "◉";
-            }
-        }
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
-                loginAdmin();
-            }
-        });
-
-    </script>
 </form>
 </body>
 </html>

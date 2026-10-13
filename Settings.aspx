@@ -1,4 +1,6 @@
-﻿<%@ Page Title="Settings" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" %>
+﻿<%@ Page Title="Settings" Language="C#" MasterPageFile="~/Site1.Master" 
+    AutoEventWireup="true" CodeBehind="Settings.aspx.cs" 
+    Inherits="WebApplication2.Settings" %>
 
 <asp:Content ID="SettingsHead" ContentPlaceHolderID="head" runat="server">
     <style>
@@ -13,9 +15,6 @@
             padding: 25px 30px 45px 30px;
         }
 
-        /* =========================================
-           PAGE HEADER (subtitle only, title in header)
-        ========================================= */
         .settings-page-header {
             display: flex;
             align-items: center;
@@ -29,9 +28,6 @@
         }
         .settings-subtitle span { color: #aaaaaa; }
 
-        /* =========================================
-           MAIN SETTINGS CARD
-        ========================================= */
         .settings-main-card {
             width: 100%;
             max-width: 100%;
@@ -41,9 +37,6 @@
             padding: 22px;
         }
 
-        /* =========================================
-           SECTION
-        ========================================= */
         .settings-section { margin-bottom: 25px; }
         .settings-section:last-child { margin-bottom: 0; }
 
@@ -63,9 +56,6 @@
             margin-bottom: 15px;
         }
 
-        /* =========================================
-           TWO COLUMN GRID
-        ========================================= */
         .settings-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -101,9 +91,6 @@
         .settings-select { cursor: pointer; }
         .settings-select option { background: #181818; color: #ffffff; }
 
-        /* =========================================
-           COMMUNICATION BOXES
-        ========================================= */
         .communication-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -145,9 +132,6 @@
             max-width: 220px;
         }
 
-        /* =========================================
-           ACCESS + LOCALIZATION
-        ========================================= */
         .access-local-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -157,9 +141,6 @@
         .security-column,
         .localization-column { width: 100%; }
 
-        /* =========================================
-           TOGGLE BOX
-        ========================================= */
         .two-factor-box {
             width: 100%;
             height: 48px;
@@ -205,15 +186,9 @@
             transition: 0.2s;
         }
 
-        /* =========================================
-           LOCALIZATION SELECTS
-        ========================================= */
         .local-field { margin-bottom: 14px; }
         .local-field:last-child { margin-bottom: 0; }
 
-        /* =========================================
-           GLOBAL ANNOUNCEMENTS
-        ========================================= */
         .announcement-header {
             display: flex;
             justify-content: space-between;
@@ -241,9 +216,6 @@
         }
         .announcement-textarea:focus { border-color: #555555; }
 
-        /* =========================================
-           ACTION BUTTONS
-        ========================================= */
         .settings-actions {
             display: flex;
             justify-content: flex-end;
@@ -281,9 +253,6 @@
         }
         .save-config-button:hover { background: #ff8f84; }
 
-        /* =========================================
-           BOTTOM STATUS BAR
-        ========================================= */
         .settings-status-bar {
             width: 100%;
             max-width: 585px;
@@ -309,9 +278,6 @@
         .status-active { color: #bdbdbd; }
         .status-live { color: #ff6b68; }
 
-        /* =========================================
-           MESSAGE
-        ========================================= */
         .settings-message {
             display: none;
             margin-top: 12px;
@@ -320,9 +286,14 @@
             text-align: right;
         }
 
-        /* =========================================
-           DYNAMIC HAMBURGER
-        ========================================= */
+        /* Error message styling */
+        .settings-error {
+            display: block;
+            color: #ff6666;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
         .home-hamburger {
             display: flex;
             flex-direction: column;
@@ -343,9 +314,6 @@
         }
         .home-hamburger:hover span { background: #ffb0a3; }
 
-        /* =========================================
-           RESPONSIVE
-        ========================================= */
         @media screen and (max-width: 900px) {
             .settings-grid,
             .communication-grid,
@@ -371,19 +339,15 @@
     <!-- JAVASCRIPT: Show hamburger + Inject "Settings" title in header -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-
-            // 1. Show hamburger menu
             var hamburger = document.getElementById("mainHamburger");
-            if (hamburger) {
-                hamburger.style.display = "flex";
-            }
+            if (hamburger) { hamburger.style.display = "flex"; }
 
-            // 2. Inject "Settings" title into header
             var header = document.querySelector(".cine-header");
             var searchArea = document.querySelector(".header-search-area");
 
-            if (header && searchArea) {
+            if (header && searchArea && !document.getElementById("settingsHeaderTitle")) {
                 var titleEl = document.createElement("div");
+                titleEl.id = "settingsHeaderTitle";
                 titleEl.innerText = "Settings";
                 titleEl.style.color = "#FFC3B9";
                 titleEl.style.fontSize = "22px";
@@ -393,15 +357,49 @@
                 titleEl.style.flexShrink = "0";
                 titleEl.style.marginLeft = "10px";
                 titleEl.style.marginRight = "10px";
-
                 header.insertBefore(titleEl, searchArea);
             }
         });
+
+        /* Toggle Two-Factor - aa JavaScript ma j rahe chhe UI mate */
+        function toggleTwoFactor() {
+            var toggle = document.getElementById("twoFactorToggle");
+            var circle = toggle.querySelector(".toggle-circle");
+            var hdn = document.getElementById("hdnTwoFactor");
+
+            if (toggle.style.background === "rgb(60, 60, 60)") {
+                toggle.style.background = "#ffaaa1";
+                circle.style.right = "2px";
+                circle.style.left = "";
+                if (hdn) hdn.value = "true";
+            }
+            else {
+                toggle.style.background = "#3c3c3c";
+                circle.style.right = "";
+                circle.style.left = "2px";
+                if (hdn) hdn.value = "false";
+            }
+        }
+
+        /* Discard */
+        function discardSettings() {
+            var result = confirm("Discard all changes?");
+            if (result) { location.reload(); }
+        }
+
+        /* Character counter - visual only */
+        var announcement = document.getElementById("footerMessage");
+        if (announcement) {
+            announcement.addEventListener("input", function () {
+                if (this.value.length > 150) {
+                    this.value = this.value.substring(0, 150);
+                }
+            });
+        }
     </script>
 
     <div class="settings-page">
 
-        <!-- PAGE HEADER (subtitle only) -->
         <div class="settings-page-header">
             <div class="settings-subtitle">
                 Global control center
@@ -411,7 +409,6 @@
         </div>
 
 
-        <!-- MAIN SETTINGS CARD -->
         <div class="settings-main-card">
 
             <!-- GENERAL CONFIGURATION -->
@@ -422,32 +419,36 @@
                 <div class="settings-grid">
                     <div class="settings-field">
                         <label class="settings-label">Cinema Name</label>
-                        <input type="text" id="cinemaName" class="settings-input" value="CinePulse Global" />
+                        <asp:TextBox ID="txtCinemaName" runat="server" ClientIDMode="Static" 
+                            CssClass="settings-input" MaxLength="100" />
                     </div>
 
                     <div class="settings-field">
                         <label class="settings-label">Headquarters Location</label>
-                        <input type="text" id="headquarters" class="settings-input" value="Rajkot, Gujarat" />
+                        <asp:TextBox ID="txtHeadquarters" runat="server" ClientIDMode="Static" 
+                            CssClass="settings-input" MaxLength="100" />
                     </div>
 
                     <div class="settings-field">
                         <label class="settings-label">Default Timezone</label>
-                        <select id="timezone" class="settings-select">
-                            <option>India Standard Time (IST)</option>
-                            <option>UTC</option>
-                            <option>Eastern Standard Time</option>
-                            <option>Pacific Standard Time</option>
-                        </select>
+                        <asp:DropDownList ID="ddlTimezone" runat="server" ClientIDMode="Static" 
+                            CssClass="settings-select">
+                            <asp:ListItem Text="India Standard Time (IST)" Value="IST" />
+                            <asp:ListItem Text="UTC" Value="UTC" />
+                            <asp:ListItem Text="Eastern Standard Time" Value="EST" />
+                            <asp:ListItem Text="Pacific Standard Time" Value="PST" />
+                        </asp:DropDownList>
                     </div>
 
                     <div class="settings-field">
                         <label class="settings-label">Operating Currency</label>
-                        <select id="currency" class="settings-select">
-                            <option>Indian Rupee (₹)</option>
-                            <option>US Dollar ($)</option>
-                            <option>Euro (€)</option>
-                            <option>Pound Sterling (£)</option>
-                        </select>
+                        <asp:DropDownList ID="ddlCurrency" runat="server" ClientIDMode="Static" 
+                            CssClass="settings-select">
+                            <asp:ListItem Text="Indian Rupee (₹)" Value="INR" />
+                            <asp:ListItem Text="US Dollar ($)" Value="USD" />
+                            <asp:ListItem Text="Euro (€)" Value="EUR" />
+                            <asp:ListItem Text="Pound Sterling (£)" Value="GBP" />
+                        </asp:DropDownList>
                     </div>
                 </div>
             </div>
@@ -460,7 +461,8 @@
 
                 <div class="communication-grid">
                     <div class="communication-box">
-                        <input type="checkbox" class="communication-checkbox" id="systemAlerts" checked="checked" />
+                        <asp:CheckBox ID="chkSystemAlerts" runat="server" ClientIDMode="Static" 
+                            CssClass="communication-checkbox" />
                         <div class="communication-content">
                             <div class="communication-title">System Alerts (Email)</div>
                             <div class="communication-description">Receive critical system downtime and error reports.</div>
@@ -468,7 +470,8 @@
                     </div>
 
                     <div class="communication-box">
-                        <input type="checkbox" class="communication-checkbox" id="dailySms" checked="checked" />
+                        <asp:CheckBox ID="chkDailySms" runat="server" ClientIDMode="Static" 
+                            CssClass="communication-checkbox" />
                         <div class="communication-content">
                             <div class="communication-title">Daily SMS Summaries</div>
                             <div class="communication-description">Ticket sales and revenue summaries via text.</div>
@@ -476,7 +479,8 @@
                     </div>
 
                     <div class="communication-box">
-                        <input type="checkbox" class="communication-checkbox" id="adminPush" />
+                        <asp:CheckBox ID="chkAdminPush" runat="server" ClientIDMode="Static" 
+                            CssClass="communication-checkbox" />
                         <div class="communication-content">
                             <div class="communication-title">Admin Push Notifications</div>
                             <div class="communication-description">Real-time alerts for high-value transactions.</div>
@@ -484,7 +488,8 @@
                     </div>
 
                     <div class="communication-box">
-                        <input type="checkbox" class="communication-checkbox" id="marketing" />
+                        <asp:CheckBox ID="chkMarketing" runat="server" ClientIDMode="Static" 
+                            CssClass="communication-checkbox" />
                         <div class="communication-content">
                             <div class="communication-title">Marketing Broadcasts</div>
                             <div class="communication-description">Receive copies of promotional campaigns sent to users.</div>
@@ -498,7 +503,6 @@
             <div class="settings-section">
                 <div class="access-local-grid">
 
-                    <!-- ACCESS & SECURITY -->
                     <div class="security-column">
                         <div class="settings-section-title">Access &amp; Security</div>
                         <div class="settings-section-line"></div>
@@ -513,34 +517,39 @@
                             </div>
                         </div>
 
+                        <asp:HiddenField ID="hdnTwoFactor" runat="server" ClientIDMode="Static" Value="true" />
+
                         <div class="settings-field">
                             <label class="settings-label">Session Timeout (Minutes)</label>
-                            <input type="number" id="sessionTimeout" class="settings-input" value="30" />
+                            <asp:TextBox ID="txtSessionTimeout" runat="server" ClientIDMode="Static" 
+                                CssClass="settings-input" TextMode="Number" />
+                            <asp:Label ID="lblSessionError" runat="server" CssClass="settings-error" Visible="false" />
                         </div>
                     </div>
 
-                    <!-- LOCALIZATION -->
                     <div class="localization-column">
                         <div class="settings-section-title">Localization</div>
                         <div class="settings-section-line"></div>
 
                         <div class="local-field">
                             <label class="settings-label">Admin Dashboard Theme</label>
-                            <select class="settings-select" id="dashboardTheme">
-                                <option>Cinematic Dark (Active)</option>
-                                <option>Classic Dark</option>
-                                <option>Light</option>
-                            </select>
+                            <asp:DropDownList ID="ddlDashboardTheme" runat="server" ClientIDMode="Static" 
+                                CssClass="settings-select">
+                                <asp:ListItem Text="Cinematic Dark (Active)" Value="CinematicDark" />
+                                <asp:ListItem Text="Classic Dark" Value="ClassicDark" />
+                                <asp:ListItem Text="Light" Value="Light" />
+                            </asp:DropDownList>
                         </div>
 
                         <div class="local-field">
                             <label class="settings-label">System Language</label>
-                            <select class="settings-select" id="systemLanguage">
-                                <option>English (US)</option>
-                                <option>English (UK)</option>
-                                <option>Gujarati</option>
-                                <option>Hindi</option>
-                            </select>
+                            <asp:DropDownList ID="ddlSystemLanguage" runat="server" ClientIDMode="Static" 
+                                CssClass="settings-select">
+                                <asp:ListItem Text="English (US)" Value="en-US" />
+                                <asp:ListItem Text="English (UK)" Value="en-GB" />
+                                <asp:ListItem Text="Gujarati" Value="gu-IN" />
+                                <asp:ListItem Text="Hindi" Value="hi-IN" />
+                            </asp:DropDownList>
                         </div>
                     </div>
 
@@ -557,17 +566,21 @@
                 <div class="settings-section-line"></div>
 
                 <label class="settings-label">Footer Message (Visible to all users)</label>
-                <textarea id="footerMessage" class="announcement-textarea" maxlength="150">System maintenance scheduled for Sunday 02:00 AM IST. Expect minor disruptions.</textarea>
+                <asp:TextBox ID="txtFooterMessage" runat="server" ClientIDMode="Static" 
+                    CssClass="announcement-textarea" TextMode="MultiLine" MaxLength="150" />
+                <asp:Label ID="lblFooterError" runat="server" CssClass="settings-error" Visible="false" />
             </div>
 
 
             <!-- ACTION BUTTONS -->
             <div class="settings-actions">
                 <button type="button" class="discard-button" onclick="discardSettings();">Discard Changes</button>
-                <button type="button" class="save-config-button" onclick="saveConfiguration();">⊙&nbsp; Save Configuration</button>
+                <asp:Button ID="btnSaveConfiguration" runat="server" ClientIDMode="Static" 
+                    CssClass="save-config-button" Text="⊙  Save Configuration" 
+                    OnClick="btnSaveConfiguration_Click" />
             </div>
 
-            <div id="settingsMessage" class="settings-message">Configuration saved successfully.</div>
+            <asp:Label ID="lblSettingsMessage" runat="server" CssClass="settings-message" Visible="false" />
         </div>
 
 
@@ -584,54 +597,5 @@
         </div>
 
     </div>
-
-
-    <!-- =========================================
-         JAVASCRIPT
-    ========================================= -->
-    <script type="text/javascript">
-
-        function toggleTwoFactor() {
-            var toggle = document.getElementById("twoFactorToggle");
-            var circle = toggle.querySelector(".toggle-circle");
-
-            if (toggle.style.background === "rgb(60, 60, 60)") {
-                toggle.style.background = "#ffaaa1";
-                circle.style.right = "2px";
-                circle.style.left = "";
-            }
-            else {
-                toggle.style.background = "#3c3c3c";
-                circle.style.right = "";
-                circle.style.left = "2px";
-            }
-        }
-
-        function saveConfiguration() {
-            var message = document.getElementById("settingsMessage");
-            message.style.display = "block";
-            message.innerHTML = "Configuration saved successfully.";
-
-            setTimeout(function () {
-                message.style.display = "none";
-            }, 3000);
-        }
-
-        function discardSettings() {
-            var result = confirm("Discard all changes?");
-            if (result) { location.reload(); }
-        }
-
-        /* Character counter */
-        var announcement = document.getElementById("footerMessage");
-        if (announcement) {
-            announcement.addEventListener("input", function () {
-                if (this.value.length > 150) {
-                    this.value = this.value.substring(0, 150);
-                }
-            });
-        }
-
-    </script>
 
 </asp:Content>
