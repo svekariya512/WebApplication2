@@ -1,0 +1,797 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="User.Master.cs" Inherits="WebApplication2.User" %>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+
+    <title>CinePulse</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+
+
+    <style>
+
+        /* ==============================
+           RESET
+        ============================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background: #111111;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        /* ==============================
+           MAIN LAYOUT
+        ============================== */
+
+        .layout {
+            min-height: 100vh;
+            width: 100%;
+        }
+
+
+        /* ==============================
+           SIDEBAR
+        ============================== */
+
+        .sidebar {
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 154px;
+
+            background: #1b1b1b;
+
+            border-right: 1px solid #303030;
+
+            padding: 18px 16px;
+
+            display: flex;
+            flex-direction: column;
+
+            z-index: 1000;
+        }
+
+
+        /* ==============================
+           LOGO
+        ============================== */
+
+        .logo {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 8px;
+
+            margin-bottom: 32px;
+        }
+
+
+        .logo-icon {
+
+            color: #ffaaa0;
+
+            font-size: 18px;
+
+            margin-top: 5px;
+        }
+
+
+        .logo-content {
+            line-height: 1;
+        }
+
+
+        .logo-title {
+
+            color: #ffaaa0;
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            letter-spacing: -0.4px;
+        }
+
+
+        .logo-subtitle {
+
+            color: #d0b5b2;
+
+            font-size: 7px;
+
+            line-height: 1.35;
+
+            margin-top: 5px;
+        }
+
+
+        /* ==============================
+           USER
+        ============================== */
+
+        .user-box {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 27px;
+
+            padding-left: 1px;
+        }
+
+
+        .user-avatar {
+
+            width: 32px;
+
+            height: 32px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            border: 1px solid #555555;
+
+            background: #111111;
+        }
+
+
+        .user-name {
+
+            color: #eeeeee;
+
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+
+        /* ==============================
+           MENU
+        ============================== */
+
+        .menu {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 5px;
+
+            width: 100%;
+        }
+        .user-info {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 6px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.user-info:hover {
+    background: #292929;
+}
+
+.user-name {
+    display: block;
+    color: #eeeeee;
+    font-size: 9px;
+}
+
+.user-info small {
+    display: block;
+    color: #777777;
+    font-size: 6px;
+    margin-top: 2px;
+}
+
+.user-info-box {
+    display: none;
+    position: absolute;
+    left: 165px;
+    top: 75px;
+    width: 220px;
+    background: #202020;
+    border: 1px solid #363636;
+    border-radius: 7px;
+    padding: 15px;
+    z-index: 9999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+}
+
+.user-info-box.show {
+    display: block;
+}
+
+.profile-popup-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #333333;
+}
+
+.popup-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #555555;
+}
+
+.profile-popup-header h3 {
+    color: #eeeeee;
+    font-size: 11px;
+    margin: 0 0 3px;
+}
+
+.profile-popup-header p {
+    color: #777777;
+    font-size: 7px;
+    margin: 0;
+}
+
+.profile-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 7px 0;
+    border-bottom: 1px solid #292929;
+}
+
+.profile-detail span {
+    color: #777777;
+    font-size: 6px;
+}
+
+.profile-detail strong {
+    color: #dddddd;
+    font-size: 8px;
+    font-weight: 500;
+}
+
+.popup-profile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 12px;
+    height: 27px;
+    background: #ed101c;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 7px;
+}
+
+.popup-profile-btn:hover {
+    background: #ff1d29;
+    color: white;
+}
+
+        .menu-item {
+
+            width: 100%;
+
+            min-height: 40px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 7px 10px;
+
+            border-radius: 4px;
+
+            text-decoration: none;
+
+            color: #dddddd;
+
+            font-size: 11px;
+
+            transition: all 0.2s ease;
+
+            background: transparent;
+        }
+
+
+        /* Icon */
+
+        .menu-item i {
+
+            width: 16px;
+
+            min-width: 16px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+            color: #e3c5c1;
+        }
+
+
+        /* ==============================
+           HOVER
+        ============================== */
+
+        .menu-item:hover {
+
+            background: #292929;
+
+            color: #ffaaa0;
+
+            text-decoration: none;
+        }
+
+
+        .menu-item:hover i {
+
+            color: #ffaaa0;
+        }
+
+
+        /* ==============================
+           ACTIVE PAGE
+        ============================== */
+
+        .menu-item.active {
+
+            background: #393939;
+
+            color: #ffaaa0;
+
+            font-weight: 600;
+        }
+
+
+        .menu-item.active i {
+
+            color: #ffaaa0;
+        }
+
+
+        /* ==============================
+           CHANGE PASSWORD
+        ============================== */
+
+        .menu-item.password-item {
+
+            line-height: 1.25;
+        }
+
+
+        /* ==============================
+           SIDEBAR BOTTOM
+        ============================== */
+
+        .sidebar-bottom {
+
+            margin-top: auto;
+
+            padding-top: 20px;
+        }
+
+
+        /* ==============================
+           BOOK NEW MOVIE BUTTON
+        ============================== */
+
+        .book-btn {
+
+            width: 100%;
+
+            min-height: 40px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            background: #ed101c;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            border-radius: 4px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            transition: background 0.2s ease;
+        }
+
+
+        .book-btn i {
+
+            font-size: 11px;
+
+            color: #ffffff;
+        }
+
+
+        .book-btn:hover {
+
+            background: #ff1d29;
+
+            color: #ffffff;
+
+            text-decoration: none;
+        }
+
+
+        /* ==============================
+           MAIN CONTENT
+        ============================== */
+
+        .main-content {
+
+            margin-left: 154px;
+
+            min-height: 100vh;
+
+            width: calc(100% - 154px);
+
+            background: #111111;
+        }
+
+
+        /* ==============================
+           RESPONSIVE
+        ============================== */
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+
+                width: 130px;
+
+                padding: 15px 10px;
+            }
+
+
+            .main-content {
+
+                margin-left: 130px;
+
+                width: calc(100% - 130px);
+            }
+
+
+            .logo-title {
+
+                font-size: 15px;
+            }
+
+
+            .menu-item {
+
+                font-size: 9px;
+
+                gap: 8px;
+            }
+
+
+            .user-name {
+
+                font-size: 10px;
+            }
+
+
+            .book-btn {
+
+                font-size: 8px;
+            }
+        }
+
+    </style>
+
+</head>
+    <script>
+    function toggleUserInfo() {
+        var box = document.getElementById("userInfoBox");
+
+        if (box.classList.contains("show")) {
+            box.classList.remove("show");
+        } else {
+            box.classList.add("show");
+        }
+    }
+
+    document.addEventListener("click", function (event) {
+
+        var userInfo = document.querySelector(".user-info");
+        var box = document.getElementById("userInfoBox");
+
+        if (userInfo && box &&
+            !userInfo.contains(event.target) &&
+            !box.contains(event.target)) {
+
+            box.classList.remove("show");
+        }
+    });
+    </script>
+
+<body>
+
+<form id="form1" runat="server">
+
+    <div class="layout">
+
+
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+
+        <aside class="sidebar">
+
+
+            <!-- LOGO -->
+
+            <div class="logo">
+
+                <i class="fa-solid fa-clapperboard logo-icon"></i>
+
+                <div class="logo-content">
+
+                    <div class="logo-title">
+                        CinePulse
+                    </div>
+
+                    <div class="logo-subtitle">
+                        Global Control<br />
+                        Center
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- USER -->
+
+          <div class="user-info"
+     onclick="toggleUserInfo()">
+
+    <img src="<%= ResolveUrl("~/Images/profile.png") %>"
+         class="user-avatar"
+         alt="Profile" />
+
+    <div>
+        <span class="user-name">Mital</span>
+        <small>View Profile</small>
+    </div>
+
+</div>
+
+<!-- User Information Popup -->
+
+<div id="userInfoBox" class="user-info-box">
+
+    <div class="profile-popup-header">
+
+        <img src="<%= ResolveUrl("~/Images/profile.png") %>"
+             alt="Profile"
+             class="popup-avatar" />
+
+        <div>
+            <h3>Mital</h3>
+            <p>CinePulse User</p>
+        </div>
+
+    </div>
+
+    <div class="profile-detail">
+        <span>Name</span>
+        <strong>Mital</strong>
+    </div>
+
+    <div class="profile-detail">
+        <span>Email</span>
+        <strong>mital@example.com</strong>
+    </div>
+
+    <div class="profile-detail">
+        <span>Mobile</span>
+        <strong>+91 XXXXX XXXXX</strong>
+    </div>
+
+    <a href="UserProfile.aspx"
+       class="popup-profile-btn">
+        <i class="fa-solid fa-user"></i>
+        View Full Profile
+    </a>
+
+</div>
+
+
+            <!-- MENU -->
+
+            <nav class="menu">
+
+
+                <!-- OVERVIEW -->
+
+                <a href="UserDashboard.aspx"
+                   class="menu-item <%= GetActiveClass("UserDashboard.aspx") %>">
+
+                    <i class="fa-solid fa-table-cells-large"></i>
+
+                    <span>
+                        Overview
+                    </span>
+
+                </a>
+
+
+                <!-- MY PROFILE -->
+
+                <a href="UserProfile.aspx"
+                   class="menu-item <%= GetActiveClass("UserProfile.aspx") %>">
+
+                    <i class="fa-regular fa-circle-user"></i>
+
+                    <span>
+                        My Profile
+                    </span>
+
+                </a>
+
+
+                <!-- MY TICKETS -->
+
+                <a href="MyTickets.aspx"
+                   class="menu-item <%= GetActiveClass("MyTickets.aspx") %>">
+
+                    <i class="fa-solid fa-ticket"></i>
+
+                    <span>
+                        My Tickets
+                    </span>
+
+                </a>
+
+
+                <!-- WISHLIST -->
+
+                <a href="Wishlist.aspx"
+                   class="menu-item <%= GetActiveClass("Wishlist.aspx") %>">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                    <span>
+                        Wishlist
+                    </span>
+
+                </a>
+
+
+                <!-- CHANGE PASSWORD -->
+
+                <a href="ChangePassword.aspx"
+                   class="menu-item password-item <%= GetActiveClass("ChangePassword.aspx") %>">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <span>
+                        Change<br />
+                        Password
+                    </span>
+
+                </a>
+
+
+                <!-- VIEW WEBSITE -->
+
+                <a href="ViewWebsite.aspx"
+                   class="menu-item <%= GetActiveClass("ViewWebsite.aspx") %>">
+
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                    <span>
+                        View Website
+                    </span>
+
+                </a>
+
+
+                <!-- LOGOUT -->
+
+                <a href="Logout.aspx"
+                   class="menu-item">
+
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                    <span>
+                        Logout
+                    </span>
+
+                </a>
+
+
+            </nav>
+
+
+            <!-- BOTTOM BUTTON -->
+
+            <div class="sidebar-bottom">
+
+                <a href="BookMovie.aspx"
+                   class="book-btn">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                    <span>
+                        Book New Movie
+                    </span>
+
+                </a>
+
+            </div>
+
+
+        </aside>
+
+
+        <!-- =====================================
+             MAIN PAGE CONTENT
+        ====================================== -->
+
+        <main class="main-content">
+
+            <asp:ContentPlaceHolder
+                ID="MainContent"
+                runat="server">
+            </asp:ContentPlaceHolder>
+
+        </main>
+
+
+    </div>
+
+</form>
+
+</body>
+</html>
