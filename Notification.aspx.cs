@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -32,11 +33,46 @@ namespace WebApplication2
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // ⭐ C# thi header ma "Notifications" add karo
+            RegisterHeaderTitle();
+
             if (!IsPostBack)
             {
                 LoadNotifications();
                 LoadStats();
             }
+        }
+
+        // =========================================
+        // ⭐ HEADER TITLE — C# thi Register
+        // =========================================
+        private void RegisterHeaderTitle()
+        {
+            string script = @"
+                (function() {
+                    var header = document.querySelector('.cine-header');
+                    var searchArea = document.querySelector('.header-search-area');
+                    
+                    if (header && searchArea && !document.getElementById('notifHeaderTitle')) {
+                        var titleEl = document.createElement('div');
+                        titleEl.id = 'notifHeaderTitle';
+                        titleEl.innerText = 'Notifications';
+                        titleEl.style.color = '#FFC3B9';
+                        titleEl.style.fontSize = '22px';
+                        titleEl.style.fontWeight = '500';
+                        titleEl.style.marginLeft = '10px';
+                        titleEl.style.marginRight = '10px';
+                        titleEl.style.whiteSpace = 'nowrap';
+                        titleEl.style.flexShrink = '0';
+                        header.insertBefore(titleEl, searchArea);
+                    }
+
+                    var hamburger = document.getElementById('mainHamburger');
+                    if (hamburger) { hamburger.style.display = 'flex'; }
+                })();
+            ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "notifHeaderTitle", script, true);
         }
 
         // =========================================
@@ -78,7 +114,6 @@ namespace WebApplication2
                 filtered.Add(n);
             }
 
-            // Order by CreatedAt DESC
             filtered.Sort((a, b) => b.CreatedAt.CompareTo(a.CreatedAt));
 
             rptNotifications.DataSource = filtered;
@@ -113,10 +148,35 @@ namespace WebApplication2
         }
 
         // =========================================
-        // SEARCH
+        // SEARCH — C# VALIDATION
         // =========================================
         protected void txtNotifSearch_TextChanged(object sender, EventArgs e)
         {
+            string search = txtNotifSearch.Text.Trim();
+
+            // ===== VALIDATION =====
+            if (!string.IsNullOrEmpty(search))
+            {
+                if (search.Length < 2)
+                {
+                    ShowAlert("Search term must be at least 2 characters.");
+                    return;
+                }
+
+                if (search.Length > 50)
+                {
+                    ShowAlert("Search term cannot exceed 50 characters.");
+                    return;
+                }
+
+                if (!Regex.IsMatch(search, @"^[a-zA-Z0-9\s\-]+$"))
+                {
+                    ShowAlert("Search contains invalid characters.");
+                    txtNotifSearch.Text = "";
+                    return;
+                }
+            }
+
             LoadNotifications();
         }
 
@@ -133,28 +193,50 @@ namespace WebApplication2
             // MARK AS READ
             if (e.CommandName == "MarkRead")
             {
+                // C# Validation
+                if (n.IsRead)
+                {
+                    ShowAlert("Already marked as read.");
+                    return;
+                }
+
                 n.IsRead = true;
                 NotificationList = list;
 
                 LoadNotifications();
                 LoadStats();
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Notification marked as read.');", true);
+                ShowAlert("Notification marked as read.");
             }
 
             // DELETE
             else if (e.CommandName == "DeleteNotification")
             {
+                // C# Validation
+                if (n.Id <= 0)
+                {
+                    ShowAlert("Invalid notification.");
+                    return;
+                }
+
                 list.RemoveAll(x => x.Id == id);
                 NotificationList = list;
 
                 LoadNotifications();
                 LoadStats();
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Notification deleted successfully.');", true);
+                ShowAlert("Notification deleted successfully.");
             }
+        }
+
+        // =========================================
+        // HELPERS — ShowAlert
+        // =========================================
+        private void ShowAlert(string message)
+        {
+            string script = "alert('" + message.Replace("'", "\\'") + "');";
+            ScriptManager.RegisterStartupScript(this, this.GetType(),
+                "alert" + Guid.NewGuid().ToString("N"), script, true);
         }
     }
 
