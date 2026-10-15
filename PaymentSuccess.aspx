@@ -148,10 +148,11 @@
         .success-btn:hover {
             color: white;
         }
-
+        /* this is bydefault payment page conform*/
     </style>
 
 </asp:Content>
+
 
 
 <asp:Content ID="Content2"

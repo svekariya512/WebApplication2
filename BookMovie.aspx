@@ -7,7 +7,7 @@
     runat="server">
 
     <style>
-
+        /*user can book a movie*/
         .booking-page {
             min-height: 100vh;
             padding: 38px 32px;

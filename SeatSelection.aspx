@@ -33,7 +33,7 @@
             align-items: flex-start;
         }
 
-        /* SCREEN */
+       
 
         .screen-card {
             width: 300px;

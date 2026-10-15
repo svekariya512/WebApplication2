@@ -40,7 +40,7 @@
             margin: 0 0 14px;
         }
 
-        /* Dates */
+       
 
         .date-row {
             display: flex;

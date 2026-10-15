@@ -211,7 +211,7 @@
         </div>
 
 
-        <!-- DYNAMIC TICKET -->
+        <!-- TICKET -->
 
         <div class="ticket-card">
 

@@ -6,6 +6,7 @@
     runat="server">
 
     <style>
+        /*settings page*/
 
         .password-page {
             min-height: 100vh;
@@ -16,6 +17,9 @@
             padding: 30px;
             color: #ffffff;
         }
+
+
+
 
         .password-card {
             width: 326px;

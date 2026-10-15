@@ -15,8 +15,7 @@
             box-sizing: border-box;
         }
 
-        /* Header */
-
+        
         .wishlist-header h1 {
             font-size: 24px;
             margin: 0 0 4px;

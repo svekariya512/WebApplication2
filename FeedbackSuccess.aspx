@@ -6,7 +6,7 @@
     runat="server">
 
     <style>
-
+        /* feedback are given success message*/
         .feedback-success-page {
             min-height: 100vh;
             background: #111111;
