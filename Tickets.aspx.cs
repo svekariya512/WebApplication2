@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -13,6 +14,9 @@ namespace WebApplication2
             set { ViewState["Filter"] = value; }
         }
 
+        // =========================================
+        // SESSION-BASED TICKETS
+        // =========================================
         private List<TicketItem> TicketList
         {
             get
@@ -21,8 +25,9 @@ namespace WebApplication2
                 {
                     Session["TicketList"] = new List<TicketItem>
                     {
-                        new TicketItem { Id = 1, TicketId = "CP12345678", MovieName = "Inception", Venue = "Cinepolis, Rajkot", ShowDate = DateTime.Now.AddDays(2), Seats = "E7, E8", Status = "Confirmed" },
-                        new TicketItem { Id = 2, TicketId = "CP87654321", MovieName = "Interstellar", Venue = "INOX, Ahmedabad", ShowDate = DateTime.Now.AddDays(-5), Seats = "A1, A2", Status = "Past" }
+                        new TicketItem { Id = 1, TicketId = "CP94821039", MovieName = "Spider-Man: Brand New Day", Venue = "CINEPOLIS, Rajkot", ShowDate = new DateTime(2026, 8, 14, 18, 0, 0), Seats = "E7, E8", Status = "Confirmed" },
+                        new TicketItem { Id = 2, TicketId = "CP94821040", MovieName = "Jhamkudi", Venue = "Cinepolis: Alpha One, Ahmedabad", ShowDate = new DateTime(2026, 8, 14, 18, 0, 0), Seats = "E7, E8", Status = "Confirmed" },
+                        new TicketItem { Id = 3, TicketId = "CP202013945", MovieName = "Cocktail 2", Venue = "Cosmoplex, Rajkot", ShowDate = new DateTime(2023, 8, 12, 7, 30, 0), Seats = "A1", Status = "Past" }
                     };
                 }
                 return (List<TicketItem>)Session["TicketList"];
@@ -32,6 +37,8 @@ namespace WebApplication2
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            RegisterHeaderTitle();
+
             if (!IsPostBack)
             {
                 LoadTickets();
@@ -39,6 +46,41 @@ namespace WebApplication2
             }
         }
 
+        // =========================================
+        // HEADER TITLE — C# thi Register
+        // =========================================
+        private void RegisterHeaderTitle()
+        {
+            string script = @"
+                (function() {
+                    var header = document.querySelector('.cine-header');
+                    var searchArea = document.querySelector('.header-search-area');
+                    
+                    if (header && searchArea && !document.getElementById('ticketsHeaderTitle')) {
+                        var titleEl = document.createElement('div');
+                        titleEl.id = 'ticketsHeaderTitle';
+                        titleEl.innerText = 'My Tickets';
+                        titleEl.style.color = '#FFC3B9';
+                        titleEl.style.fontSize = '22px';
+                        titleEl.style.fontWeight = '500';
+                        titleEl.style.marginLeft = '10px';
+                        titleEl.style.marginRight = '10px';
+                        titleEl.style.whiteSpace = 'nowrap';
+                        titleEl.style.flexShrink = '0';
+                        header.insertBefore(titleEl, searchArea);
+                    }
+
+                    var hamburger = document.getElementById('mainHamburger');
+                    if (hamburger) { hamburger.style.display = 'flex'; }
+                })();
+            ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "headerTitle", script, true);
+        }
+
+        // =========================================
+        // LOAD TICKETS
+        // =========================================
         private void LoadTickets()
         {
             string search = txtTicketSearch.Text.Trim().ToLower();
@@ -66,6 +108,9 @@ namespace WebApplication2
             lblEmpty.Visible = filtered.Count == 0;
         }
 
+        // =========================================
+        // LOAD STATS
+        // =========================================
         private void LoadStats()
         {
             int total = TicketList.Count;
@@ -80,11 +125,41 @@ namespace WebApplication2
             lblUpcomingBookings.Text = upcoming.ToString();
         }
 
+        // =========================================
+        // SEARCH
+        // =========================================
         protected void txtTicketSearch_TextChanged(object sender, EventArgs e)
         {
+            string search = txtTicketSearch.Text.Trim();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                if (search.Length < 2)
+                {
+                    ShowAlert("Search term must be at least 2 characters.");
+                    return;
+                }
+
+                if (search.Length > 50)
+                {
+                    ShowAlert("Search term cannot exceed 50 characters.");
+                    return;
+                }
+
+                if (!Regex.IsMatch(search, @"^[a-zA-Z0-9\s\-]+$"))
+                {
+                    ShowAlert("Search contains invalid characters.");
+                    txtTicketSearch.Text = "";
+                    return;
+                }
+            }
+
             LoadTickets();
         }
 
+        // =========================================
+        // FILTER TABS
+        // =========================================
         protected void FilterTab_Click(object sender, EventArgs e)
         {
             LinkButton btn = (LinkButton)sender;
@@ -92,6 +167,158 @@ namespace WebApplication2
             LoadTickets();
         }
 
+        // =========================================
+        // ADD TICKET BUTTON
+        // =========================================
+        protected void btnAddTicket_Click(object sender, EventArgs e)
+        {
+            hdnEditTicketId.Value = "";
+            ticketModalTitle.Text = "Add Ticket";
+            btnSaveTicket.Text = "Save Ticket";
+
+            txtModalMovie.Text = "";
+            txtModalVenue.Text = "";
+            txtModalTicketId.Text = "CP" + new Random().Next(10000000, 99999999);
+            txtModalSeats.Text = "";
+            ddlModalStatus.SelectedValue = "Confirmed";
+
+            lblMovieError.Text = "";
+            lblVenueError.Text = "";
+            lblTicketIdError.Text = "";
+            lblSeatsError.Text = "";
+
+            TicketModal.CssClass = "ticket-modal-overlay show";
+        }
+
+        // =========================================
+        // SAVE TICKET — C# VALIDATION
+        // =========================================
+        protected void btnSaveTicket_Click(object sender, EventArgs e)
+        {
+            lblMovieError.Text = "";
+            lblVenueError.Text = "";
+            lblTicketIdError.Text = "";
+            lblSeatsError.Text = "";
+
+            string movie = txtModalMovie.Text.Trim();
+            string venue = txtModalVenue.Text.Trim();
+            string ticketId = txtModalTicketId.Text.Trim();
+            string seats = txtModalSeats.Text.Trim();
+            string status = ddlModalStatus.SelectedValue;
+            string editId = hdnEditTicketId.Value;
+
+            bool hasError = false;
+
+            // MOVIE
+            if (string.IsNullOrEmpty(movie))
+            {
+                lblMovieError.Text = "Movie name is required.";
+                hasError = true;
+            }
+            else if (movie.Length < 2)
+            {
+                lblMovieError.Text = "Movie name must be at least 2 characters.";
+                hasError = true;
+            }
+
+            // VENUE
+            if (string.IsNullOrEmpty(venue))
+            {
+                lblVenueError.Text = "Venue is required.";
+                hasError = true;
+            }
+            else if (venue.Length < 3)
+            {
+                lblVenueError.Text = "Venue must be at least 3 characters.";
+                hasError = true;
+            }
+
+            // TICKET ID
+            if (string.IsNullOrEmpty(ticketId))
+            {
+                lblTicketIdError.Text = "Ticket ID is required.";
+                hasError = true;
+            }
+            else if (!Regex.IsMatch(ticketId, @"^CP\d{8,12}$"))
+            {
+                lblTicketIdError.Text = "Ticket ID must be: CP + 8-12 digits";
+                hasError = true;
+            }
+
+            // SEATS
+            if (string.IsNullOrEmpty(seats))
+            {
+                lblSeatsError.Text = "Seats are required.";
+                hasError = true;
+            }
+            else if (!Regex.IsMatch(seats, @"^[A-Z]\d{1,2}(,\s*[A-Z]\d{1,2})*$"))
+            {
+                lblSeatsError.Text = "Seats format: e.g. E7, E8";
+                hasError = true;
+            }
+
+            if (hasError)
+            {
+                TicketModal.CssClass = "ticket-modal-overlay show";
+                return;
+            }
+
+            // SAVE
+            try
+            {
+                List<TicketItem> list = TicketList;
+
+                if (!string.IsNullOrEmpty(editId))
+                {
+                    int id = Convert.ToInt32(editId);
+                    TicketItem t = list.Find(x => x.Id == id);
+                    if (t != null)
+                    {
+                        t.MovieName = movie;
+                        t.Venue = venue;
+                        t.TicketId = ticketId;
+                        t.Seats = seats;
+                        t.Status = status;
+                    }
+                }
+                else
+                {
+                    int newId = 1;
+                    foreach (TicketItem t in list)
+                    {
+                        if (t.Id >= newId) newId = t.Id + 1;
+                    }
+
+                    list.Add(new TicketItem
+                    {
+                        Id = newId,
+                        TicketId = ticketId,
+                        MovieName = movie,
+                        Venue = venue,
+                        ShowDate = DateTime.Now,
+                        Seats = seats,
+                        Status = status
+                    });
+                }
+
+                TicketList = list;
+                hdnEditTicketId.Value = "";
+
+                LoadTickets();
+                LoadStats();
+
+                TicketModal.CssClass = "ticket-modal-overlay";
+            }
+            catch (Exception ex)
+            {
+                lblMovieError.Text = "Error: " + ex.Message;
+                TicketModal.CssClass = "ticket-modal-overlay show";
+            }
+        }
+
+        // =========================================
+        // REPEATER — VIEW / EDIT / DELETE
+        // =========================================
         protected void rptTickets_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
@@ -99,15 +326,21 @@ namespace WebApplication2
             TicketItem t = list.Find(x => x.Id == id);
             if (t == null) return;
 
-            if (e.CommandName == "DeleteTicket")
+            // ⭐ VIEW — Modal ma table view
+            if (e.CommandName == "ViewTicket")
             {
-                list.RemoveAll(x => x.Id == id);
-                TicketList = list;
-                LoadTickets();
-                LoadStats();
-                ShowAlert("Ticket deleted successfully.");
+                viewModalTitle.Text = "Ticket Details";
+                lblViewTicketId.Text = t.TicketId;
+                lblViewMovieName.Text = t.MovieName;
+                lblViewVenue.Text = t.Venue;
+                lblViewShowDate.Text = t.ShowDate.ToString("dd MMM yyyy, hh:mm tt");
+                lblViewSeats.Text = t.Seats;
+                lblViewStatus.Text = t.Status;
+
+                ViewModal.CssClass = "view-modal-overlay show";
             }
-            else if (e.CommandName == "ViewTicket" || e.CommandName == "EditTicket")
+            // EDIT
+            else if (e.CommandName == "EditTicket")
             {
                 txtModalMovie.Text = t.MovieName;
                 txtModalVenue.Text = t.Venue;
@@ -116,82 +349,47 @@ namespace WebApplication2
                 ddlModalStatus.SelectedValue = t.Status;
                 hdnEditTicketId.Value = t.Id.ToString();
 
-                if (e.CommandName == "ViewTicket")
-                {
-                    string script = "document.getElementById('ticketModalTitle').innerText='Ticket Details';" +
-                                    "document.getElementById('ticketModal').classList.add('show');";
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "openView", script, true);
-                }
-                else
-                {
-                    string script = "document.getElementById('ticketModalTitle').innerText='Edit Ticket';" +
-                                    "document.getElementById('btnSaveTicket').value='Save Changes';" +
-                                    "document.getElementById('ticketModal').classList.add('show');";
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "openEdit", script, true);
-                }
+                ticketModalTitle.Text = "Edit Ticket";
+                btnSaveTicket.Text = "Save Changes";
+
+                lblMovieError.Text = "";
+                lblVenueError.Text = "";
+                lblTicketIdError.Text = "";
+                lblSeatsError.Text = "";
+
+                TicketModal.CssClass = "ticket-modal-overlay show";
+            }
+            // DELETE
+            else if (e.CommandName == "DeleteTicket")
+            {
+                list.RemoveAll(x => x.Id == id);
+                TicketList = list;
+
+                LoadTickets();
+                LoadStats();
             }
         }
 
-        protected void btnSaveTicket_Click(object sender, EventArgs e)
+        // =========================================
+        // CANCEL
+        // =========================================
+        protected void btnCancelTicket_Click(object sender, EventArgs e)
         {
-            string movie = txtModalMovie.Text.Trim();
-            string venue = txtModalVenue.Text.Trim();
-            string ticketId = txtModalTicketId.Text.Trim();
-            string seats = txtModalSeats.Text.Trim();
-            string status = ddlModalStatus.SelectedValue;
-            string editId = hdnEditTicketId.Value;
-
-            if (string.IsNullOrEmpty(movie) || string.IsNullOrEmpty(venue) || string.IsNullOrEmpty(ticketId))
-            {
-                ShowAlert("Please fill all required fields.");
-                return;
-            }
-
-            List<TicketItem> list = TicketList;
-
-            if (!string.IsNullOrEmpty(editId))
-            {
-                int id = Convert.ToInt32(editId);
-                TicketItem t = list.Find(x => x.Id == id);
-                if (t != null)
-                {
-                    t.MovieName = movie;
-                    t.Venue = venue;
-                    t.TicketId = ticketId;
-                    t.Seats = seats;
-                    t.Status = status;
-                }
-            }
-            else
-            {
-                int newId = 1;
-                foreach (TicketItem t in list)
-                {
-                    if (t.Id >= newId) newId = t.Id + 1;
-                }
-                list.Add(new TicketItem
-                {
-                    Id = newId,
-                    TicketId = ticketId,
-                    MovieName = movie,
-                    Venue = venue,
-                    ShowDate = DateTime.Now,
-                    Seats = seats,
-                    Status = status
-                });
-            }
-
-            TicketList = list;
+            TicketModal.CssClass = "ticket-modal-overlay";
             hdnEditTicketId.Value = "";
-
-            string script = "alert('Ticket saved successfully.');" +
-                            "document.getElementById('ticketModal').classList.remove('show');";
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "msg", script, true);
-
-            LoadTickets();
-            LoadStats();
         }
 
+        // =========================================
+        // CLOSE VIEW MODAL
+        // =========================================
+        protected void btnCloseView_Click(object sender, EventArgs e)
+        {
+            ViewModal.CssClass = "view-modal-overlay";
+        }
+
+        // =========================================
+        // HELPERS — ShowAlert
+        // =========================================
         private void ShowAlert(string message)
         {
             string script = "alert('" + message.Replace("'", "\\'") + "');";
@@ -200,6 +398,9 @@ namespace WebApplication2
         }
     }
 
+    // =========================================
+    // ⭐ MODEL CLASS — TicketItem
+    // =========================================
     public class TicketItem
     {
         public int Id { get; set; }
