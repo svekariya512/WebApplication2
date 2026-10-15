@@ -15,7 +15,7 @@
             box-sizing: border-box;
         }
 
-        /* Header */
+        
 
         .welcome-title {
             font-size: 17px;

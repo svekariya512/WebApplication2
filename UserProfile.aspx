@@ -64,7 +64,7 @@
             color: #ff4b4b;
         }
 
-        /* Form card */
+
 
         .profile-card {
             width: 344px;

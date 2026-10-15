@@ -6,6 +6,7 @@
     runat="server">
 
     <style>
+        /*settings page*/
 
         .password-page {
             min-height: 100vh;

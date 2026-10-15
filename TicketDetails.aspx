@@ -15,7 +15,6 @@
             color: #ffffff;
         }
 
-        /* Header */
 
         .details-header {
             margin-bottom: 22px;
