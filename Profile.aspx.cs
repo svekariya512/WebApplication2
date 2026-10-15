@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web.UI;
 
 namespace WebApplication2
@@ -81,7 +81,10 @@ namespace WebApplication2
     }
 
     // =========================================
-    // ADMIN DATA CLASS — Fakt Ahi Define Chhe
+    // ADMIN DATA — only defined here (one place)
+    // =========================================
+    // =========================================
+    // ADMIN DATA — only defined here (one place)
     // =========================================
     public class AdminData
     {
@@ -96,4 +99,5 @@ namespace WebApplication2
         public DateTime? BirthDate { get; set; }
         public DateTime CreatedAt { get; set; }
     }
+
 }
