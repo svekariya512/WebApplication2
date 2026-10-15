@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Admin Profile" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="Profile.aspx.cs" Inherits="WebApplication2.Profile" %>
+<%@ Page Title="Admin Profile" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="Profile.aspx.cs" Inherits="WebApplication2.Profile" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 <style>
@@ -67,28 +67,6 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <asp:HiddenField ID="hdnAdminId" runat="server" ClientIDMode="Static" />
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var hamburger = document.getElementById("mainHamburger");
-            if (hamburger) { hamburger.style.display = "flex"; }
-
-            var header = document.querySelector(".cine-header");
-            var searchArea = document.querySelector(".header-search-area");
-
-            if (header && searchArea && !document.getElementById("profileHeaderTitle")) {
-                var titleEl = document.createElement("div");
-                titleEl.id = "profileHeaderTitle";
-                titleEl.innerText = "Admin Profile";
-                titleEl.style.color = "#FFC3B9";
-                titleEl.style.fontSize = "22px";
-                titleEl.style.fontWeight = "500";
-                titleEl.style.marginLeft = "10px";
-                titleEl.style.marginRight = "10px";
-                header.insertBefore(titleEl, searchArea);
-            }
-        });
-    </script>
 
     <div class="profile-page">
 
