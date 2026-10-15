@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -7,9 +8,6 @@ namespace WebApplication2
 {
     public partial class users : System.Web.UI.Page
     {
-        // =========================================
-        // IN-MEMORY USERS DATA
-        // =========================================
         private List<User> UserList
         {
             get
@@ -18,9 +16,9 @@ namespace WebApplication2
                 {
                     Session["UserList"] = new List<User>
                     {
-                        new User { Id = 1, FullName = "Raj Patel", Email = "raj@test.com", Status = "ACTIVE", ResetOTP = "123456", CreatedAt = DateTime.Now.AddDays(-30) },
-                        new User { Id = 2, FullName = "Priya Shah", Email = "priya@test.com", Status = "ACTIVE", ResetOTP = "654321", CreatedAt = DateTime.Now.AddDays(-15) },
-                        new User { Id = 3, FullName = "Amit Kumar", Email = "amit@test.com", Status = "PENDING", ResetOTP = "111111", CreatedAt = DateTime.Now.AddDays(-5) },
+                        new User { Id = 1, FullName = "shreeya vekariya", Email = "s@test.com", Status = "ACTIVE", ResetOTP = "123456", CreatedAt = DateTime.Now.AddDays(-30) },
+                        new User { Id = 2, FullName = "mitu uteriya", Email = "m@test.com", Status = "ACTIVE", ResetOTP = "654321", CreatedAt = DateTime.Now.AddDays(-15) },
+                        new User { Id = 3, FullName = "jaldhara jadav", Email = "j@test.com", Status = "PENDING", ResetOTP = "111111", CreatedAt = DateTime.Now.AddDays(-5) },
                         new User { Id = 4, FullName = "Sneha Joshi", Email = "sneha@test.com", Status = "ACTIVE", ResetOTP = "222222", CreatedAt = DateTime.Now.AddDays(-10) }
                     };
                 }
@@ -38,9 +36,6 @@ namespace WebApplication2
             }
         }
 
-        // =========================================
-        // HELPERS
-        // =========================================
         public string GetInitials(string name)
         {
             if (string.IsNullOrEmpty(name)) return "??";
@@ -49,37 +44,15 @@ namespace WebApplication2
             return (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
         }
 
-        // =========================================
-        // LOAD USERS
-        // =========================================
         private void LoadUsers()
         {
-            string search = txtSearch.Text.Trim().ToLower();
-            List<User> filtered = new List<User>();
-
-            foreach (User u in UserList)
-            {
-                if (!string.IsNullOrEmpty(search))
-                {
-                    if (!u.FullName.ToLower().Contains(search) &&
-                        !u.Email.ToLower().Contains(search))
-                        continue;
-                }
-
-                filtered.Add(u);
-            }
-
-            rptUsers.DataSource = filtered;
+            rptUsers.DataSource = UserList;
             rptUsers.DataBind();
         }
 
-        // =========================================
-        // LOAD STATS
-        // =========================================
         private void LoadStats()
         {
             List<User> list = UserList;
-
             int total = list.Count;
             int active = 0;
             int pending = 0;
@@ -96,19 +69,14 @@ namespace WebApplication2
         }
 
         // =========================================
-        // SEARCH
-        // =========================================
-        protected void txtSearch_TextChanged(object sender, EventArgs e)
-        {
-            LoadUsers();
-        }
-
-        // =========================================
-        // SAVE USER
+        // SAVE USER — C# VALIDATION
         // =========================================
         protected void btnSaveUser_Click(object sender, EventArgs e)
         {
-            if (!Page.IsValid) return;
+            lblNameError.Text = "";
+            lblEmailError.Text = "";
+            lblPasswordError.Text = "";
+            lblOtpError.Text = "";
 
             string name = txtUserName.Text.Trim();
             string email = txtUserEmail.Text.Trim();
@@ -117,21 +85,63 @@ namespace WebApplication2
             string otp = txtUserOtp.Text.Trim();
             string editId = hdnEditUserId.Value;
 
-            if (string.IsNullOrEmpty(name) || name.Length < 2)
+            bool hasError = false;
+
+            if (string.IsNullOrEmpty(name))
             {
-                ShowAlert("Valid name required.");
-                return;
+                lblNameError.Text = "Full name is required.";
+                hasError = true;
+            }
+            else if (name.Length < 2)
+            {
+                lblNameError.Text = "Name must be at least 2 characters.";
+                hasError = true;
+            }
+            else if (!Regex.IsMatch(name, @"^[a-zA-Z\s.\-']+$"))
+            {
+                lblNameError.Text = "Name can only contain letters, spaces, dots, hyphens.";
+                hasError = true;
             }
 
-            if (string.IsNullOrEmpty(email) || !email.Contains("@"))
+            if (string.IsNullOrEmpty(email))
             {
-                ShowAlert("Valid email required.");
-                return;
+                lblEmailError.Text = "Email is required.";
+                hasError = true;
+            }
+            else if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+            {
+                lblEmailError.Text = "Please enter a valid email address.";
+                hasError = true;
             }
 
-            if (string.IsNullOrEmpty(otp) || otp.Length != 6)
+            if (string.IsNullOrEmpty(editId))
             {
-                ShowAlert("OTP must be 6 digits.");
+                if (string.IsNullOrEmpty(password))
+                {
+                    lblPasswordError.Text = "Password is required.";
+                    hasError = true;
+                }
+                else if (password.Length < 6)
+                {
+                    lblPasswordError.Text = "Password must be at least 6 characters.";
+                    hasError = true;
+                }
+            }
+
+            if (string.IsNullOrEmpty(otp))
+            {
+                lblOtpError.Text = "OTP is required.";
+                hasError = true;
+            }
+            else if (!Regex.IsMatch(otp, @"^\d{6}$"))
+            {
+                lblOtpError.Text = "OTP must be exactly 6 digits.";
+                hasError = true;
+            }
+
+            if (hasError)
+            {
+                UserModal.CssClass = "modal-overlay show";
                 return;
             }
 
@@ -141,7 +151,6 @@ namespace WebApplication2
 
                 if (!string.IsNullOrEmpty(editId))
                 {
-                    // UPDATE
                     int id = Convert.ToInt32(editId);
                     User u = list.Find(x => x.Id == id);
                     if (u != null)
@@ -154,13 +163,6 @@ namespace WebApplication2
                 }
                 else
                 {
-                    // INSERT
-                    if (string.IsNullOrEmpty(password))
-                    {
-                        ShowAlert("Password required.");
-                        return;
-                    }
-
                     int newId = 1;
                     foreach (User u in list)
                     {
@@ -190,19 +192,15 @@ namespace WebApplication2
                 LoadUsers();
                 LoadStats();
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('User saved successfully.');" +
-                    "document.getElementById('userModal').classList.remove('show');", true);
+                UserModal.CssClass = "modal-overlay";
             }
             catch (Exception ex)
             {
-                ShowAlert("Error: " + ex.Message.Replace("'", ""));
+                lblNameError.Text = "Error: " + ex.Message;
+                UserModal.CssClass = "modal-overlay show";
             }
         }
 
-        // =========================================
-        // EDIT / DELETE
-        // =========================================
         protected void rptUsers_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
@@ -215,8 +213,6 @@ namespace WebApplication2
 
                 LoadUsers();
                 LoadStats();
-
-                ShowAlert("User deleted successfully.");
             }
             else if (e.CommandName == "EditUser")
             {
@@ -230,28 +226,26 @@ namespace WebApplication2
                     txtUserOtp.Text = u.ResetOTP;
                     hdnEditUserId.Value = u.Id.ToString();
 
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "openEdit",
-                        "document.getElementById('modalTitle').innerText='Edit User';" +
-                        "document.getElementById('btnSaveUser').value='Save Changes';" +
-                        "document.getElementById('userModal').classList.add('show');", true);
+                    modalTitle.Text = "Edit User";
+                    btnSaveUser.Text = "Save Changes";
+
+                    lblNameError.Text = "";
+                    lblEmailError.Text = "";
+                    lblPasswordError.Text = "";
+                    lblOtpError.Text = "";
+
+                    UserModal.CssClass = "modal-overlay show";
                 }
             }
         }
 
-        // =========================================
-        // HELPERS
-        // =========================================
-        private void ShowAlert(string message)
+        protected void btnCloseModal_Click(object sender, EventArgs e)
         {
-            string script = "alert('" + message.Replace("'", "\\'") + "');";
-            ScriptManager.RegisterStartupScript(this, this.GetType(),
-                "alert" + Guid.NewGuid().ToString("N"), script, true);
+            UserModal.CssClass = "modal-overlay";
+            hdnEditUserId.Value = "";
         }
     }
 
-    // =========================================
-    // MODEL CLASS
-    // =========================================
     public class User
     {
         public int Id { get; set; }
