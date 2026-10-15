@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using System.Web.UI;
 
@@ -8,7 +8,6 @@ namespace WebApplication2
     {
         // =========================================
         // SESSION-BASED ADMIN DATA
-        // (AdminData class Profile.aspx.cs ma chhe)
         // =========================================
         private AdminData Admin
         {
@@ -70,7 +69,7 @@ namespace WebApplication2
         }
 
         // =========================================
-        // SAVE PROFILE — C# VALIDATION
+        // SAVE PROFILE — C# VALIDATION ONLY
         // =========================================
         protected void btnSaveProfile_Click(object sender, EventArgs e)
         {
@@ -160,10 +159,8 @@ namespace WebApplication2
 
                 Admin = a;
 
-                ShowSuccess("Profile updated successfully!");
-
-                string script = "setTimeout(function(){ window.location.href='Profile.aspx'; }, 2000);";
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "redirect", script, true);
+                // Redirect directly — no JS needed
+                Response.Redirect("Profile.aspx");
             }
             catch (Exception ex)
             {
@@ -197,5 +194,20 @@ namespace WebApplication2
         }
     }
 
-    // ❌ AdminData class AHI NATHI — Profile.aspx.cs ma chhe
+    // =========================================
+    // ADMIN DATA MODEL (shared with Profile.aspx)
+    // =========================================
+    public class AdminData
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+        public string Phone { get; set; }
+        public string Location { get; set; }
+        public string Bio { get; set; }
+        public string Gender { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
 }
