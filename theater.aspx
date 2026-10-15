@@ -1,35 +1,35 @@
-﻿<%@ Page Title="Theater" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="theater.aspx.cs" Inherits="WebApplication2.theater" %>
+<%@ Page Title="Theater" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="theater.aspx.cs" Inherits="WebApplication2.theater" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 
 <style>
     .theater-page {
         min-height: 100vh;
-        background: #111111;
+        background: #0d0d0d;
         color: #ffffff;
-        padding: 25px 35px 45px 35px;
+        padding: 24px 32px 45px 32px;
     }
 
-    .theater-section { margin-bottom: 30px; }
+    .theater-section { margin-bottom: 36px; }
 
     .section-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
 
     .section-heading {
         margin: 0;
         color: #eeeeee;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 600;
     }
 
     .section-description {
         margin: 5px 0 0 0;
         color: #8c8c8c;
-        font-size: 10px;
+        font-size: 11px;
     }
 
     .add-button {
@@ -37,82 +37,95 @@
         color: #ffffff;
         border: none;
         border-radius: 4px;
-        padding: 8px 14px;
+        padding: 9px 15px;
         font-size: 11px;
         cursor: pointer;
         white-space: nowrap;
-        font-weight: 500;
+        font-weight: 600;
         transition: 0.2s;
     }
     .add-button:hover { background: #d90009; }
 
     .table-box {
         width: 100%;
-        background: #181818;
-        border: 1px solid #303030;
-        border-radius: 5px;
+        background: #141414;
+        border: 1px solid #262626;
+        border-radius: 6px;
         overflow: hidden;
     }
 
     .theater-table { width: 100%; border-collapse: collapse; }
 
     .theater-table th {
-        height: 42px;
-        background: #1b1b1b;
-        color: #d2a7a7;
+        height: 44px;
+        background: #101010;
+        color: #9a9a9a;
         font-size: 10px;
         font-weight: 500;
-        letter-spacing: 0.7px;
+        letter-spacing: 0.6px;
         text-align: left;
-        padding: 0 15px;
-        border-bottom: 1px solid #303030;
+        padding: 0 16px;
+        border-bottom: 1px solid #262626;
         text-transform: uppercase;
     }
 
     .theater-table td {
-        min-height: 52px;
-        padding: 12px 15px;
-        color: #c6c6c6;
+        padding: 14px 16px;
+        color: #c9c9c9;
         font-size: 11px;
-        border-bottom: 1px solid #292929;
+        border-bottom: 1px solid #202020;
         vertical-align: middle;
     }
 
     .theater-table tr:last-child td { border-bottom: none; }
-    .theater-table tbody tr:hover td { background: #202020; }
+    .theater-table tbody tr:hover td { background: #191919; }
 
-    .number { width: 32px; color: #777777 !important; }
+    .number { width: 40px; color: #7a7a7a !important; }
 
-    .theater-name,
-    .movie-name {
-        color: #eeeeee !important;
+    .theater-name, .movie-name {
+        color: #ececec !important;
         font-weight: 500;
         white-space: nowrap;
     }
 
-    .location,
-    .format,
-    .show-time {
-        color: #b8b8b8 !important;
+    .location, .format, .show-time {
+        color: #b5b5b5 !important;
         white-space: nowrap;
     }
 
-    .amenities,
-    .features {
+    .show-time.multiline {
+        white-space: normal;
+        line-height: 18px;
+        max-width: 260px;
+    }
+
+    .amenities, .features {
         display: flex;
         flex-wrap: wrap;
         gap: 5px;
     }
 
-    .amenity,
-    .feature {
+    .amenity, .feature {
         display: inline-block;
-        background: #333333;
+        background: #2b2b2b;
         color: #c9b2b2;
         border-radius: 3px;
-        padding: 4px 8px;
+        padding: 4px 9px;
         font-size: 9px;
+        letter-spacing: 0.3px;
         white-space: nowrap;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    /* preview of comfort card image inside table */
+    .comfort-thumb {
+        width: 78px;
+        height: 42px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #2a2a2a;
+        display: block;
     }
 
     .actions {
@@ -120,7 +133,7 @@
         white-space: nowrap;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         justify-content: flex-end;
         width: 100%;
     }
@@ -128,35 +141,35 @@
     .edit-button {
         background: transparent;
         color: #dddddd;
-        border: 1px solid #604444;
+        border: 1px solid #4a3838;
         border-radius: 3px;
-        padding: 0 12px;
+        padding: 0 13px;
         font-size: 10px;
         cursor: pointer;
         transition: 0.2s;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        height: 26px;
+        height: 27px;
         line-height: 1;
         text-decoration: none;
         white-space: nowrap;
     }
-    .edit-button:hover { background: #333333; color: #ffffff; text-decoration: none; }
+    .edit-button:hover { background: #2a2a2a; color: #ffffff; text-decoration: none; }
 
     .delete-button {
         background: #ff111c;
         color: #ffffff;
         border: 1px solid #ff111c;
         border-radius: 3px;
-        padding: 0 12px;
+        padding: 0 13px;
         font-size: 10px;
         cursor: pointer;
         transition: 0.2s;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        height: 26px;
+        height: 27px;
         line-height: 1;
         text-decoration: none;
         white-space: nowrap;
@@ -207,9 +220,7 @@
     .modal-close:hover { color: #ffffff; }
 
     .modal-body { padding: 20px; }
-
     .modal-field { margin-bottom: 14px; }
-
     .modal-field label {
         display: block;
         color: #858585;
@@ -218,9 +229,7 @@
         letter-spacing: .5px;
         margin-bottom: 6px;
     }
-
-    .modal-field input,
-    .modal-field textarea {
+    .modal-field input, .modal-field textarea {
         width: 100%;
         background: #181818;
         border: 1px solid #3b3b3b;
@@ -234,15 +243,7 @@
     }
     .modal-field input { height: 35px; }
     .modal-field textarea { min-height: 70px; padding: 10px; resize: vertical; }
-    .modal-field input:focus,
-    .modal-field textarea:focus { border-color: #777777; }
-
-    .error-msg {
-        display: block;
-        color: #ff6666;
-        font-size: 10px;
-        margin-top: 5px;
-    }
+    .modal-field input:focus, .modal-field textarea:focus { border-color: #777777; }
 
     .modal-footer {
         display: flex;
@@ -260,7 +261,6 @@
         font-size: 10px;
         cursor: pointer;
     }
-
     .modal-cancel {
         background: transparent;
         border: 1px solid #444444;
@@ -278,16 +278,11 @@
 
     @media screen and (max-width: 1000px) {
         .theater-page { padding: 20px 18px 40px 18px; }
-        .theater-table { min-width: 750px; }
+        .theater-table { min-width: 780px; }
         .table-box { overflow-x: auto; }
     }
-
     @media screen and (max-width: 700px) {
-        .section-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-        }
+        .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
         .section-heading { font-size: 15px; }
     }
 </style>
@@ -300,94 +295,7 @@
     <asp:HiddenField ID="hdnEditTheaterId" runat="server" ClientIDMode="Static" />
     <asp:HiddenField ID="hdnEditShowingId" runat="server" ClientIDMode="Static" />
     <asp:HiddenField ID="hdnEditSignatureId" runat="server" ClientIDMode="Static" />
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var hamburger = document.getElementById("mainHamburger");
-            if (hamburger) { hamburger.style.display = "flex"; }
-
-            var header = document.querySelector(".cine-header");
-            var searchArea = document.querySelector(".header-search-area");
-
-            if (header && searchArea && !document.getElementById("theaterHeaderTitle")) {
-                var titleEl = document.createElement("div");
-                titleEl.id = "theaterHeaderTitle";
-                titleEl.innerText = "Theater Management";
-                titleEl.style.color = "#FFC3B9";
-                titleEl.style.fontSize = "22px";
-                titleEl.style.fontWeight = "500";
-                titleEl.style.letterSpacing = "0.5px";
-                titleEl.style.whiteSpace = "nowrap";
-                titleEl.style.flexShrink = "0";
-                titleEl.style.marginLeft = "10px";
-                titleEl.style.marginRight = "10px";
-                header.insertBefore(titleEl, searchArea);
-            }
-        });
-
-        function closeTheaterModal() {
-            document.getElementById("theaterModal").classList.remove("show");
-            document.getElementById("hdnEditTheaterId").value = "";
-        }
-
-        function closeShowingModal() {
-            document.getElementById("showingModal").classList.remove("show");
-            document.getElementById("hdnEditShowingId").value = "";
-        }
-
-        function closeSignatureModal() {
-            document.getElementById("signatureModal").classList.remove("show");
-            document.getElementById("hdnEditSignatureId").value = "";
-        }
-
-        document.addEventListener("click", function (event) {
-            if (event.target === document.getElementById("theaterModal")) { closeTheaterModal(); }
-            if (event.target === document.getElementById("showingModal")) { closeShowingModal(); }
-            if (event.target === document.getElementById("signatureModal")) { closeSignatureModal(); }
-        });
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-                closeTheaterModal();
-                closeShowingModal();
-                closeSignatureModal();
-            }
-        });
-
-        function openAddTheater() {
-            document.getElementById("theaterModalTitle").innerText = "Add Theater";
-            document.getElementById("txtTheaterName").value = "";
-            document.getElementById("txtLocation").value = "";
-            document.getElementById("txtAmenities").value = "";
-            document.getElementById("hdnEditTheaterId").value = "";
-            document.getElementById("btnSaveTheater").value = "Save Theater";
-            document.getElementById("theaterModal").classList.add("show");
-            setTimeout(function () { document.getElementById("txtTheaterName").focus(); }, 100);
-        }
-
-        function openAddShowing() {
-            document.getElementById("showingModalTitle").innerText = "Add Showing";
-            document.getElementById("txtShowingMovie").value = "";
-            document.getElementById("txtShowingFormat").value = "";
-            document.getElementById("txtShowingTimings").value = "";
-            document.getElementById("hdnEditShowingId").value = "";
-            document.getElementById("btnSaveShowing").value = "Save Showing";
-            document.getElementById("showingModal").classList.add("show");
-            setTimeout(function () { document.getElementById("txtShowingMovie").focus(); }, 100);
-        }
-
-        function openAddSignature() {
-            document.getElementById("signatureModalTitle").innerText = "Add Signature Screen";
-            document.getElementById("txtSignatureMovie").value = "";
-            document.getElementById("txtSignatureFormat").value = "";
-            document.getElementById("txtSignatureFeatures").value = "";
-            document.getElementById("txtSignatureTimings").value = "";
-            document.getElementById("hdnEditSignatureId").value = "";
-            document.getElementById("btnSaveSignature").value = "Save Signature Screen";
-            document.getElementById("signatureModal").classList.add("show");
-            setTimeout(function () { document.getElementById("txtSignatureMovie").focus(); }, 100);
-        }
-    </script>
+    <asp:HiddenField ID="hdnEditComfortId" runat="server" ClientIDMode="Static" />
 
 <div class="theater-page">
 
@@ -400,14 +308,15 @@
                 <h2 class="section-heading">Theater Listings</h2>
                 <p class="section-description">Manage theater locations and amenities.</p>
             </div>
-            <button type="button" class="add-button" onclick="openAddTheater();">+ Add Theater</button>
+            <asp:Button ID="btnAddTheater" runat="server" CssClass="add-button" Text="+ Add Theater"
+                OnClick="btnAddTheater_Click" CausesValidation="false" />
         </div>
 
         <div class="table-box">
             <table class="theater-table">
                 <thead>
                     <tr>
-                        <th style="width:35px;">#</th>
+                        <th style="width:40px;">#</th>
                         <th>Theater Name</th>
                         <th>Location</th>
                         <th>Amenities</th>
@@ -423,16 +332,20 @@
                                 <td class="location"><%# Eval("Location") %></td>
                                 <td>
                                     <div class="amenities">
-                                        <span class="amenity"><%# Eval("Amenities") %></span>
+                                        <asp:Repeater ID="rptAmenities" runat="server"
+                                            DataSource='<%# SplitList(Eval("Amenities")) %>'>
+                                            <ItemTemplate>
+                                                <span class="amenity"><%# Container.DataItem %></span>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="actions">
-                                        <asp:LinkButton runat="server" CssClass="edit-button" Text="✎ EDIT"
-                                            CommandName="EditTheater" CommandArgument='<%# Eval("Id") %>' />
-                                        <asp:LinkButton runat="server" CssClass="delete-button" Text="🗑 DELETE"
-                                            CommandName="DeleteTheater" CommandArgument='<%# Eval("Id") %>'
-                                            OnClientClick="return confirm('Delete this theater?');" />
+                                        <asp:LinkButton runat="server" CssClass="edit-button" Text="✎ Edit"
+                                            CommandName="EditTheater" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
+                                        <asp:LinkButton runat="server" CssClass="delete-button" Text="🗑 Delete"
+                                            CommandName="DeleteTheater" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
                                     </div>
                                 </td>
                             </tr>
@@ -453,14 +366,15 @@
                 <h2 class="section-heading">Movie Showings</h2>
                 <p class="section-description">Manage signature screens and show timings.</p>
             </div>
-            <button type="button" class="add-button" onclick="openAddShowing();">+ Add Showing</button>
+            <asp:Button ID="btnAddShowing" runat="server" CssClass="add-button" Text="+ Add Showing"
+                OnClick="btnAddShowing_Click" CausesValidation="false" />
         </div>
 
         <div class="table-box">
             <table class="theater-table">
                 <thead>
                     <tr>
-                        <th style="width:35px;">#</th>
+                        <th style="width:40px;">#</th>
                         <th>Movie</th>
                         <th>Format</th>
                         <th>Show Timings</th>
@@ -477,11 +391,10 @@
                                 <td class="show-time"><%# Eval("ShowTimings") %></td>
                                 <td>
                                     <div class="actions">
-                                        <asp:LinkButton runat="server" CssClass="edit-button" Text="✎ EDIT"
-                                            CommandName="EditShowing" CommandArgument='<%# Eval("Id") %>' />
-                                        <asp:LinkButton runat="server" CssClass="delete-button" Text="🗑 DELETE"
-                                            CommandName="DeleteShowing" CommandArgument='<%# Eval("Id") %>'
-                                            OnClientClick="return confirm('Delete this showing?');" />
+                                        <asp:LinkButton runat="server" CssClass="edit-button" Text="✎ Edit"
+                                            CommandName="EditShowing" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
+                                        <asp:LinkButton runat="server" CssClass="delete-button" Text="🗑 Delete"
+                                            CommandName="DeleteShowing" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
                                     </div>
                                 </td>
                             </tr>
@@ -502,14 +415,15 @@
                 <h2 class="section-heading">Signature Screens Management</h2>
                 <p class="section-description">Manage premium viewing formats and signature experiences.</p>
             </div>
-            <button type="button" class="add-button" onclick="openAddSignature();">+ Add Signature Screen</button>
+            <asp:Button ID="btnAddSignature" runat="server" CssClass="add-button" Text="+ Add Signature Screen"
+                OnClick="btnAddSignature_Click" CausesValidation="false" />
         </div>
 
         <div class="table-box">
             <table class="theater-table">
                 <thead>
                     <tr>
-                        <th style="width:35px;">#</th>
+                        <th style="width:40px;">#</th>
                         <th>Movie</th>
                         <th>Format</th>
                         <th>Features</th>
@@ -526,17 +440,72 @@
                                 <td class="format"><%# Eval("Format") %></td>
                                 <td>
                                     <div class="features">
-                                        <span class="feature"><%# Eval("Features") %></span>
+                                        <asp:Repeater ID="rptFeatures" runat="server"
+                                            DataSource='<%# SplitList(Eval("Features")) %>'>
+                                            <ItemTemplate>
+                                                <span class="feature"><%# Container.DataItem %></span>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
                                     </div>
                                 </td>
-                                <td class="show-time"><%# Eval("ShowTimings") %></td>
+                                <td class="show-time multiline"><%# Eval("ShowTimings") %></td>
                                 <td>
                                     <div class="actions">
-                                        <asp:LinkButton runat="server" CssClass="edit-button" Text="✎ EDIT"
-                                            CommandName="EditSignatureScreen" CommandArgument='<%# Eval("Id") %>' />
-                                        <asp:LinkButton runat="server" CssClass="delete-button" Text="🗑 DELETE"
-                                            CommandName="DeleteSignatureScreen" CommandArgument='<%# Eval("Id") %>'
-                                            OnClientClick="return confirm('Delete this signature screen?');" />
+                                        <asp:LinkButton runat="server" CssClass="edit-button" Text="✎ Edit"
+                                            CommandName="EditSignatureScreen" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
+                                        <asp:LinkButton runat="server" CssClass="delete-button" Text="🗑 Delete"
+                                            CommandName="DeleteSignatureScreen" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- ==================================================
+         SECTION 4: UNCOMPROMISED COMFORT (Admin Table)
+    ================================================== -->
+    <div class="theater-section">
+        <div class="section-header">
+            <div>
+                <h2 class="section-heading">Uncompromised Comfort</h2>
+                <p class="section-description">Every detail curated for the most luxurious cinematic experience.</p>
+            </div>
+            <asp:Button ID="btnAddComfort" runat="server" CssClass="add-button" Text="+ Add Comfort Feature"
+                OnClick="btnAddComfort_Click" CausesValidation="false" />
+        </div>
+
+        <div class="table-box">
+            <table class="theater-table">
+                <thead>
+                    <tr>
+                        <th style="width:40px;">#</th>
+                        <th style="width:100px;">Image</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <asp:Repeater ID="rptComfort" runat="server" OnItemCommand="rptComfort_ItemCommand">
+                        <ItemTemplate>
+                            <tr>
+                                <td class="number"><%# Container.ItemIndex + 1 %></td>
+                                <td>
+                                    <img class="comfort-thumb" src='<%# Eval("ImageUrl") %>' alt="" />
+                                </td>
+                                <td class="theater-name"><%# Eval("Title") %></td>
+                                <td><%# Eval("Description") %></td>
+                                <td>
+                                    <div class="actions">
+                                        <asp:LinkButton runat="server" CssClass="edit-button" Text="✎ Edit"
+                                            CommandName="EditComfort" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
+                                        <asp:LinkButton runat="server" CssClass="delete-button" Text="🗑 Delete"
+                                            CommandName="DeleteComfort" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
                                     </div>
                                 </td>
                             </tr>
@@ -551,11 +520,12 @@
 
 
 <!-- ============ THEATER MODAL ============ -->
-<div id="theaterModal" class="theater-modal-overlay">
+<asp:Panel ID="theaterModal" runat="server" CssClass="theater-modal-overlay" ClientIDMode="Static">
     <div class="theater-modal">
         <div class="modal-header">
-            <div class="modal-title" id="theaterModalTitle">Add Theater</div>
-            <button type="button" class="modal-close" onclick="closeTheaterModal();">×</button>
+            <div class="modal-title"><asp:Label ID="theaterModalTitle" runat="server" Text="Add Theater" /></div>
+            <asp:Button ID="btnCloseTheater" runat="server" CssClass="modal-close" Text="×"
+                OnClick="btnCloseTheater_Click" CausesValidation="false" />
         </div>
         <div class="modal-body">
             <div class="modal-field">
@@ -567,25 +537,27 @@
                 <asp:TextBox ID="txtLocation" runat="server" ClientIDMode="Static" placeholder="e.g. Mumbai, MH" />
             </div>
             <div class="modal-field">
-                <label>Amenities</label>
-                <asp:TextBox ID="txtAmenities" runat="server" ClientIDMode="Static" placeholder="e.g. IMAX, ATMOS" />
+                <label>Amenities (comma-separated)</label>
+                <asp:TextBox ID="txtAmenities" runat="server" ClientIDMode="Static" placeholder="e.g. IMAX, ATMOS, LUXE" />
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="modal-cancel" onclick="closeTheaterModal();">Cancel</button>
+            <asp:Button runat="server" CssClass="modal-cancel" Text="Cancel"
+                OnClick="btnCloseTheater_Click" CausesValidation="false" />
             <asp:Button ID="btnSaveTheater" runat="server" ClientIDMode="Static" CssClass="modal-save"
                 Text="Save Theater" OnClick="btnSaveTheater_Click" />
         </div>
     </div>
-</div>
+</asp:Panel>
 
 
 <!-- ============ SHOWING MODAL ============ -->
-<div id="showingModal" class="theater-modal-overlay">
+<asp:Panel ID="showingModal" runat="server" CssClass="theater-modal-overlay" ClientIDMode="Static">
     <div class="theater-modal">
         <div class="modal-header">
-            <div class="modal-title" id="showingModalTitle">Add Showing</div>
-            <button type="button" class="modal-close" onclick="closeShowingModal();">×</button>
+            <div class="modal-title"><asp:Label ID="showingModalTitle" runat="server" Text="Add Showing" /></div>
+            <asp:Button ID="btnCloseShowing" runat="server" CssClass="modal-close" Text="×"
+                OnClick="btnCloseShowing_Click" CausesValidation="false" />
         </div>
         <div class="modal-body">
             <div class="modal-field">
@@ -597,26 +569,28 @@
                 <asp:TextBox ID="txtShowingFormat" runat="server" ClientIDMode="Static" placeholder="e.g. IMAX 70mm" />
             </div>
             <div class="modal-field">
-                <label>Show Timings</label>
+                <label>Show Timings (comma-separated)</label>
                 <asp:TextBox ID="txtShowingTimings" runat="server" ClientIDMode="Static"
                     TextMode="MultiLine" placeholder="e.g. 10:00 AM, 02:30 PM, 07:00 PM" />
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="modal-cancel" onclick="closeShowingModal();">Cancel</button>
+            <asp:Button runat="server" CssClass="modal-cancel" Text="Cancel"
+                OnClick="btnCloseShowing_Click" CausesValidation="false" />
             <asp:Button ID="btnSaveShowing" runat="server" ClientIDMode="Static" CssClass="modal-save"
                 Text="Save Showing" OnClick="btnSaveShowing_Click" />
         </div>
     </div>
-</div>
+</asp:Panel>
 
 
 <!-- ============ SIGNATURE MODAL ============ -->
-<div id="signatureModal" class="theater-modal-overlay">
+<asp:Panel ID="signatureModal" runat="server" CssClass="theater-modal-overlay" ClientIDMode="Static">
     <div class="theater-modal">
         <div class="modal-header">
-            <div class="modal-title" id="signatureModalTitle">Add Signature Screen</div>
-            <button type="button" class="modal-close" onclick="closeSignatureModal();">×</button>
+            <div class="modal-title"><asp:Label ID="signatureModalTitle" runat="server" Text="Add Signature Screen" /></div>
+            <asp:Button ID="btnCloseSignature" runat="server" CssClass="modal-close" Text="×"
+                OnClick="btnCloseSignature_Click" CausesValidation="false" />
         </div>
         <div class="modal-body">
             <div class="modal-field">
@@ -628,21 +602,55 @@
                 <asp:TextBox ID="txtSignatureFormat" runat="server" ClientIDMode="Static" placeholder="e.g. IMAX, 4DX" />
             </div>
             <div class="modal-field">
-                <label>Features</label>
+                <label>Features (comma-separated)</label>
                 <asp:TextBox ID="txtSignatureFeatures" runat="server" ClientIDMode="Static" placeholder="e.g. Dolby Vision, Dolby Atmos" />
             </div>
             <div class="modal-field">
-                <label>Show Timings</label>
+                <label>Show Timings (comma-separated)</label>
                 <asp:TextBox ID="txtSignatureTimings" runat="server" ClientIDMode="Static"
                     TextMode="MultiLine" placeholder="e.g. 2:30 PM, 6:00 PM, 9:45 PM" />
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="modal-cancel" onclick="closeSignatureModal();">Cancel</button>
+            <asp:Button runat="server" CssClass="modal-cancel" Text="Cancel"
+                OnClick="btnCloseSignature_Click" CausesValidation="false" />
             <asp:Button ID="btnSaveSignature" runat="server" ClientIDMode="Static" CssClass="modal-save"
                 Text="Save Signature Screen" OnClick="btnSaveSignature_Click" />
         </div>
     </div>
-</div>
+</asp:Panel>
+
+
+<!-- ============ COMFORT MODAL ============ -->
+<asp:Panel ID="comfortModal" runat="server" CssClass="theater-modal-overlay" ClientIDMode="Static">
+    <div class="theater-modal">
+        <div class="modal-header">
+            <div class="modal-title"><asp:Label ID="comfortModalTitle" runat="server" Text="Add Comfort Feature" /></div>
+            <asp:Button ID="btnCloseComfort" runat="server" CssClass="modal-close" Text="×"
+                OnClick="btnCloseComfort_Click" CausesValidation="false" />
+        </div>
+        <div class="modal-body">
+            <div class="modal-field">
+                <label>Title</label>
+                <asp:TextBox ID="txtComfortTitle" runat="server" ClientIDMode="Static" placeholder="e.g. Motorized Recliners" />
+            </div>
+            <div class="modal-field">
+                <label>Description</label>
+                <asp:TextBox ID="txtComfortDesc" runat="server" ClientIDMode="Static"
+                    TextMode="MultiLine" placeholder="e.g. Fully adjustable plush-leather seating..." />
+            </div>
+            <div class="modal-field">
+                <label>Image URL</label>
+                <asp:TextBox ID="txtComfortImage" runat="server" ClientIDMode="Static" placeholder="https://..." />
+            </div>
+        </div>
+        <div class="modal-footer">
+            <asp:Button runat="server" CssClass="modal-cancel" Text="Cancel"
+                OnClick="btnCloseComfort_Click" CausesValidation="false" />
+            <asp:Button ID="btnSaveComfort" runat="server" ClientIDMode="Static" CssClass="modal-save"
+                Text="Save Comfort Feature" OnClick="btnSaveComfort_Click" />
+        </div>
+    </div>
+</asp:Panel>
 
 </asp:Content>
