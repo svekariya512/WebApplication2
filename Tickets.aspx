@@ -1,265 +1,220 @@
-﻿<%@ Page Title="Tickets" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="Tickets.aspx.cs" Inherits="WebApplication2.Tickets" %>
+<%@ Page Title="Tickets" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="Tickets.aspx.cs" Inherits="WebApplication2.Tickets" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 
 <style>
-    .tickets-page {
-        width: 100%; min-height: 100vh;
-        background: #111111; color: #eeeeee;
-        font-family: Arial, Helvetica, sans-serif;
-        padding: 25px 35px 40px 35px;
-    }
+.tickets-page {
+    width: 100%; min-height: 100vh;
+    background: #111111; color: #eeeeee;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 25px 35px 40px 35px;
+}
 
-    .tickets-topbar {
-        display: flex; justify-content: flex-end;
-        margin-bottom: 28px;
-    }
+.tickets-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
 
-    .add-ticket-btn {
-        border: none; background: #ffb6b1;
-        color: #181818; padding: 11px 17px;
-        border-radius: 6px; font-size: 11px;
-        cursor: pointer; font-weight: 600;
-        transition: 0.2s;
-    }
-    .add-ticket-btn:hover { background: #ffc7c3; }
+.tickets-stats-left {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
 
-    .ticket-stats { display: flex; gap: 15px; margin-bottom: 20px; }
+.add-ticket-btn {
+    border: none;
+    background: #ffb6b1;
+    color: #181818;
+    padding: 11px 20px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+.add-ticket-btn:hover { background: #ffc7c3; }
 
-    .stat-card {
-        width: 180px; height: 130px;
-        background: #202020; border: 1px solid #292929;
-        border-radius: 11px; padding: 16px;
-        position: relative; overflow: hidden;
-    }
+.stat-card {
+    width: 200px;
+    height: 130px;
+    background: #202020;
+    border: 1px solid #292929;
+    border-radius: 11px;
+    padding: 18px;
+}
 
-    .stat-label {
-        color: #8d8d8d; font-size: 9px;
-        letter-spacing: 1px; text-transform: uppercase;
-    }
+.stat-label { color: #8d8d8d; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+.stat-number { margin-top: 12px; font-size: 30px; color: #eeeeee; font-weight: 300; }
+.stat-growth { margin-top: 12px; font-size: 11px; color: #46b85a; }
+.stat-next { margin-top: 12px; font-size: 11px; color: #9b9b9b; line-height: 16px; }
 
-    .stat-number {
-        margin-top: 10px; font-size: 28px;
-        color: #eeeeee; font-weight: 300;
-    }
+.ticket-container {
+    width: 100%;
+    background: #1c1c1c;
+    border: 1px solid #292929;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-    .stat-growth { margin-top: 12px; font-size: 11px; color: #46b85a; }
-    .stat-next { margin-top: 12px; font-size: 11px; color: #9b9b9b; line-height: 16px; }
+.ticket-toolbar {
+    height: 55px;
+    background: #292929;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
-    .ticket-container {
-        width: 100%; background: #1c1c1c;
-        border: 1px solid #292929; border-radius: 10px;
-        overflow: hidden;
-    }
+.ticket-tabs { display: flex; gap: 3px; }
 
-    .ticket-toolbar {
-        height: 55px; background: #292929;
-        display: flex; justify-content: space-between;
-        align-items: center; padding: 0 18px;
-    }
+.ticket-tab {
+    border: none;
+    background: transparent;
+    color: #999999;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: 0.2s;
+    text-decoration: none;
+}
+.ticket-tab:hover { color: #ffffff; text-decoration: none; }
+.ticket-tab.active { background: #3a3a3a; color: #ffffff; }
 
-    .ticket-tabs { display: flex; gap: 3px; }
+.search-wrapper { position: relative; }
 
-    .ticket-tab {
-        border: none; background: transparent;
-        color: #999999; padding: 8px 15px;
-        border-radius: 4px; cursor: pointer;
-        font-size: 11px; transition: 0.2s;
-        text-decoration: none;
-    }
-    .ticket-tab:hover { color: #ffffff; }
-    .ticket-tab.active { background: #3a3a3a; color: #ffffff; }
+.ticket-search {
+    width: 220px;
+    height: 30px;
+    background: #1c1c1c;
+    border: 1px solid #404040;
+    border-radius: 5px;
+    color: white;
+    outline: none;
+    padding: 0 12px 0 30px;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+.ticket-search::placeholder { color: #777777; }
 
-    .search-wrapper { position: relative; }
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    color: #858585;
+    font-size: 12px;
+}
 
-    .ticket-search {
-        width: 220px; height: 30px;
-        background: #1c1c1c; border: 1px solid #404040;
-        border-radius: 5px; color: white;
-        outline: none; padding: 0 12px 0 30px;
-        font-size: 10px;
-    }
-    .ticket-search::placeholder { color: #777777; }
+.ticket-table-header {
+    display: grid;
+    grid-template-columns: 2.2fr .75fr .65fr .55fr .9fr .55fr;
+    align-items: center;
+    min-height: 45px;
+    padding: 0 20px;
+    border-bottom: 1px solid #292929;
+    color: #909090;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
-    .search-icon {
-        position: absolute; left: 10px; top: 8px;
-        color: #858585; font-size: 12px;
-    }
+.ticket-row {
+    display: grid;
+    grid-template-columns: 2.2fr .75fr .65fr .55fr .9fr .55fr;
+    align-items: center;
+    min-height: 85px;
+    padding: 0 20px;
+    border-bottom: 1px solid #292929;
+    transition: 0.2s;
+}
+.ticket-row:last-child { border-bottom: none; }
+.ticket-row:hover { background: #222222; }
 
-    .ticket-table-header {
-        display: grid;
-        grid-template-columns: 2.2fr .75fr .65fr .55fr .9fr .55fr;
-        align-items: center; min-height: 45px;
-        padding: 0 20px; border-bottom: 1px solid #292929;
-        color: #909090; font-size: 10px;
-        text-transform: uppercase; letter-spacing: 0.5px;
-    }
+.movie-info { display: flex; align-items: center; gap: 12px; }
+.movie-image { width: 36px; height: 48px; border-radius: 3px; background: #252525; }
+.movie-name { color: #eeeeee; font-size: 12px; margin-bottom: 5px; font-weight: 500; }
+.venue-name { color: #929292; font-size: 10px; }
 
-    .ticket-row {
-        display: grid;
-        grid-template-columns: 2.2fr .75fr .65fr .55fr .9fr .55fr;
-        align-items: center; min-height: 85px;
-        padding: 0 20px; border-bottom: 1px solid #292929;
-        transition: 0.2s;
-    }
-    .ticket-row:last-child { border-bottom: none; }
-    .ticket-row:hover { background: #222222; }
+.status { display: inline-block; padding: 5px 10px; border-radius: 12px; font-size: 10px; }
+.status.confirmed { color: #4ac15a; background: rgba(53, 164, 66, .13); }
+.status.past { color: #858585; background: #292929; }
 
-    .movie-info { display: flex; align-items: center; gap: 12px; }
+.ticket-date { color: #dddddd; font-size: 11px; line-height: 17px; }
+.ticket-date span { color: #8d8d8d; }
 
-    .movie-image {
-        width: 36px; height: 48px;
-        border-radius: 3px; background: #252525;
-    }
+.seat-list { display: flex; flex-direction: column; gap: 4px; }
+.seat { width: 26px; padding: 3px 0; text-align: center; background: #303030; color: #c8c8c8; font-size: 9px; border-radius: 3px; }
+.ticket-id { color: #cccccc; font-size: 10px; }
 
-    .movie-name { color: #eeeeee; font-size: 12px; margin-bottom: 5px; font-weight: 500; }
-    .venue-name { color: #929292; font-size: 10px; }
+.actions { display: flex; gap: 10px; align-items: center; }
+.action-btn { width: 18px; height: 18px; padding: 0; border: none; background: transparent; color: #8d8d8d; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+.action-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.action-btn:hover { color: #ffffff; text-decoration: none; }
+.delete-btn:hover { color: #ff7777; }
 
-    .status { display: inline-block; padding: 5px 10px; border-radius: 12px; font-size: 10px; }
-    .status.confirmed { color: #4ac15a; background: rgba(53, 164, 66, .13); }
-    .status.past { color: #858585; background: #292929; }
+/* MODAL */
+.ticket-modal-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0, 0, 0, 0.72); align-items: center; justify-content: center; padding: 15px; }
+.ticket-modal-overlay.show { display: flex; }
 
-    .ticket-date { color: #dddddd; font-size: 11px; line-height: 17px; }
-    .ticket-date span { color: #8d8d8d; }
+.ticket-modal { width: 430px; max-width: 100%; background: #242424; border: 1px solid #3a3a3a; border-radius: 9px; overflow: hidden; max-height: 90vh; overflow-y: auto; }
+.modal-header { height: 54px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; border-bottom: 1px solid #3a3a3a; }
+.modal-title { color: #ffffff; font-size: 14px; font-weight: 500; }
+.modal-close { border: none; background: transparent; color: #999999; font-size: 20px; cursor: pointer; }
+.modal-close:hover { color: #ffffff; }
 
-    .seat-list { display: flex; flex-direction: column; gap: 4px; }
+.modal-body { padding: 20px; }
+.modal-field { margin-bottom: 14px; }
+.modal-field label { display: block; color: #858585; font-size: 9px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.modal-field input, .modal-field select { width: 100%; height: 35px; background: #181818; border: 1px solid #3b3b3b; border-radius: 4px; color: #eeeeee; padding: 0 10px; outline: none; font-size: 11px; box-sizing: border-box; }
+.modal-field input:focus, .modal-field select:focus { border-color: #777777; }
 
-    .seat {
-        width: 26px; padding: 3px 0;
-        text-align: center; background: #303030;
-        color: #c8c8c8; font-size: 9px;
-        border-radius: 3px;
-    }
+.error-msg { display: block; color: #ff6666; font-size: 10px; margin-top: 5px; }
 
-    .ticket-id { color: #cccccc; font-size: 10px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 15px 20px; background: #202020; border-top: 1px solid #333333; }
+.modal-cancel, .modal-save { height: 32px; padding: 0 15px; border-radius: 4px; font-size: 10px; cursor: pointer; }
+.modal-cancel { background: transparent; border: 1px solid #444444; color: #aaaaaa; }
+.modal-cancel:hover { color: #ffffff; background: #303030; }
+.modal-save { background: #ffb6b1; border: 1px solid #ffb6b1; color: #181818; font-weight: 600; }
+.modal-save:hover { background: #ffc7c3; }
 
-    .actions { display: flex; gap: 12px; align-items: center; }
+/* ⭐ VIEW MODAL — TABLE VIEW */
+.view-modal-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0, 0, 0, 0.78); align-items: center; justify-content: center; padding: 15px; }
+.view-modal-overlay.show { display: flex; }
 
-    .action-btn {
-        width: 18px; height: 18px; padding: 0;
-        border: none; background: transparent;
-        color: #8d8d8d; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        text-decoration: none;
-    }
+.view-modal { width: 520px; max-width: 100%; background: #1c1c1c; border: 1px solid #3a3a3a; border-radius: 9px; overflow: hidden; max-height: 90vh; overflow-y: auto; }
+.view-modal-header { height: 55px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; border-bottom: 1px solid #3a3a3a; }
+.view-modal-title { color: #ffffff; font-size: 15px; font-weight: 600; }
+.view-modal-close { border: none; background: transparent; color: #999999; font-size: 22px; cursor: pointer; }
+.view-modal-close:hover { color: #ffffff; }
 
-    .action-btn svg {
-        width: 14px; height: 14px;
-        fill: none; stroke: currentColor;
-        stroke-width: 1.8;
-        stroke-linecap: round; stroke-linejoin: round;
-    }
-    .action-btn:hover { color: #ffffff; text-decoration: none; }
-    .delete-btn:hover { color: #ff7777; }
+.view-modal-body { padding: 22px; }
 
-    .ticket-modal-overlay {
-        display: none; position: fixed; inset: 0;
-        z-index: 9999; background: rgba(0, 0, 0, 0.72);
-        align-items: center; justify-content: center;
-    }
-    .ticket-modal-overlay.show { display: flex; }
+.view-table { width: 100%; border-collapse: collapse; }
+.view-table tr { border-bottom: 1px solid #2a2a2a; }
+.view-table tr:last-child { border-bottom: none; }
+.view-table td { padding: 14px 0; font-size: 12px; vertical-align: top; }
+.view-table td:first-child { color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; width: 140px; font-weight: 500; }
+.view-table td:last-child { color: #eeeeee; font-size: 13px; }
 
-    .ticket-modal {
-        width: 430px; max-width: calc(100% - 30px);
-        background: #242424; border: 1px solid #3a3a3a;
-        border-radius: 9px; overflow: hidden;
-    }
+.view-modal-footer { display: flex; justify-content: flex-end; padding: 15px 20px; background: #202020; border-top: 1px solid #333333; }
 
-    .modal-header {
-        height: 54px; padding: 0 20px;
-        display: flex; align-items: center;
-        justify-content: space-between;
-        background: #2c2c2c; border-bottom: 1px solid #3a3a3a;
-    }
+.ticket-footer { min-height: 45px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; color: #858585; font-size: 10px; flex-wrap: wrap; gap: 10px; }
+.footer-info { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.footer-right { display: flex; align-items: center; gap: 10px; }
+.empty-msg { text-align: center; padding: 40px 20px; color: #666; font-size: 12px; }
 
-    .modal-title { color: #ffffff; font-size: 14px; font-weight: 500; }
-
-    .modal-close {
-        border: none; background: transparent;
-        color: #999999; font-size: 20px; cursor: pointer;
-    }
-    .modal-close:hover { color: #ffffff; }
-
-    .modal-body { padding: 20px; }
-
-    .modal-field { margin-bottom: 14px; }
-
-    .modal-field label {
-        display: block; color: #858585;
-        font-size: 9px; text-transform: uppercase;
-        letter-spacing: .5px; margin-bottom: 6px;
-    }
-
-    .modal-field input,
-    .modal-field select {
-        width: 100%; height: 35px;
-        background: #181818; border: 1px solid #3b3b3b;
-        border-radius: 4px; color: #eeeeee;
-        padding: 0 10px; outline: none;
-        font-size: 11px;
-        box-sizing: border-box;
-    }
-    .modal-field input:focus,
-    .modal-field select:focus { border-color: #777777; }
-
-    .error-msg {
-        display: block; color: #ff6666;
-        font-size: 10px; margin-top: 5px;
-    }
-
-    .modal-footer {
-        display: flex; justify-content: flex-end;
-        gap: 8px; padding: 15px 20px;
-        background: #202020; border-top: 1px solid #333333;
-    }
-
-    .modal-cancel, .modal-save {
-        height: 32px; padding: 0 15px;
-        border-radius: 4px; font-size: 10px;
-        cursor: pointer;
-    }
-
-    .modal-cancel {
-        background: transparent; border: 1px solid #444444;
-        color: #aaaaaa;
-    }
-    .modal-cancel:hover { color: #ffffff; background: #303030; }
-
-    .modal-save {
-        background: #ffb6b1; border: 1px solid #ffb6b1;
-        color: #181818; font-weight: 600;
-    }
-    .modal-save:hover { background: #ffc7c3; }
-
-    .ticket-footer {
-        min-height: 45px; display: flex;
-        align-items: center; justify-content: space-between;
-        padding: 0 20px; color: #858585;
-        font-size: 10px;
-    }
-
-    .footer-info { display: flex; gap: 10px; align-items: center; }
-    .footer-right { display: flex; align-items: center; gap: 10px; }
-
-    .page-arrow {
-        border: none; background: transparent;
-        color: #aaaaaa; cursor: pointer; font-size: 18px;
-    }
-    .page-arrow:hover { color: white; }
-
-    .empty-msg {
-        text-align: center;
-        padding: 40px 20px;
-        color: #666;
-        font-size: 12px;
-    }
-
-    @media screen and (max-width: 900px) {
-        .tickets-page { padding: 20px 15px 40px 15px; }
-        .ticket-container { overflow-x: auto; }
-        .ticket-toolbar, .ticket-table-header,
-        .ticket-row, .ticket-footer { min-width: 800px; }
-    }
+@media screen and (max-width: 900px) {
+    .tickets-page { padding: 20px 15px 40px 15px; }
+    .ticket-container { overflow-x: auto; }
+    .ticket-toolbar, .ticket-table-header, .ticket-row, .ticket-footer { min-width: 800px; }
+}
 </style>
 
 </asp:Content>
@@ -267,112 +222,39 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <asp:HiddenField ID="hdnEditTicketId" runat="server" ClientIDMode="Static" />
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var hamburger = document.getElementById("mainHamburger");
-            if (hamburger) { hamburger.style.display = "flex"; }
-
-            var header = document.querySelector(".cine-header");
-            var searchArea = document.querySelector(".header-search-area");
-
-            if (header && searchArea && !document.getElementById("ticketsHeaderTitle")) {
-                var titleEl = document.createElement("div");
-                titleEl.id = "ticketsHeaderTitle";
-                titleEl.innerText = "My Tickets";
-                titleEl.style.color = "#FFC3B9";
-                titleEl.style.fontSize = "22px";
-                titleEl.style.fontWeight = "500";
-                titleEl.style.letterSpacing = "0.5px";
-                titleEl.style.whiteSpace = "nowrap";
-                titleEl.style.flexShrink = "0";
-                titleEl.style.marginLeft = "10px";
-                titleEl.style.marginRight = "10px";
-                header.insertBefore(titleEl, searchArea);
-            }
-        });
-
-        function closeTicketModal() {
-            var modal = document.getElementById("ticketModal");
-            if (modal) modal.classList.remove("show");
-            var hdn = document.getElementById("hdnEditTicketId");
-            if (hdn) hdn.value = "";
-        }
-
-        document.addEventListener("click", function (event) {
-            var m1 = document.getElementById("ticketModal");
-            if (event.target === m1) { closeTicketModal(); }
-        });
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") { closeTicketModal(); }
-        });
-
-        function openAddTicket() {
-            var titleEl = document.getElementById("ticketModalTitle");
-            var movieEl = document.getElementById("txtModalMovie");
-            var venueEl = document.getElementById("txtModalVenue");
-            var ticketIdEl = document.getElementById("txtModalTicketId");
-            var seatsEl = document.getElementById("txtModalSeats");
-            var statusEl = document.getElementById("ddlModalStatus");
-            var hdnEl = document.getElementById("hdnEditTicketId");
-            var modal = document.getElementById("ticketModal");
-
-            if (titleEl) titleEl.innerText = "Add Ticket";
-            if (movieEl) movieEl.value = "";
-            if (venueEl) venueEl.value = "";
-            if (ticketIdEl) ticketIdEl.value = "CP" + Math.floor(10000000 + Math.random() * 89999999);
-            if (seatsEl) seatsEl.value = "";
-            if (statusEl) statusEl.value = "Confirmed";
-            if (hdnEl) hdnEl.value = "";
-            if (modal) modal.classList.add("show");
-
-            setTimeout(function () {
-                if (movieEl) movieEl.focus();
-            }, 100);
-        }
-    </script>
+<asp:HiddenField ID="hdnEditTicketId" runat="server" ClientIDMode="Static" />
 
 <div class="tickets-page">
 
     <div class="tickets-topbar">
-        <button type="button" class="add-ticket-btn" onclick="openAddTicket();">
-            ✚ &nbsp; Add Ticket
-        </button>
-    </div>
-
-    <div class="ticket-stats">
-        <div class="stat-card">
-            <div class="stat-label">Total Bookings</div>
-            <div class="stat-number">
-                <asp:Label ID="lblTotalBookings" runat="server" Text="0" />
+        <div class="tickets-stats-left">
+            <div class="stat-card">
+                <div class="stat-label">Total Bookings</div>
+                <div class="stat-number"><asp:Label ID="lblTotalBookings" runat="server" Text="0" /></div>
+                <div class="stat-growth">↗ +12% this month</div>
             </div>
-            <div class="stat-growth">↗ +12% this month</div>
+
+            <div class="stat-card">
+                <div class="stat-label">Upcoming</div>
+                <div class="stat-number"><asp:Label ID="lblUpcomingBookings" runat="server" Text="0" /></div>
+                <div class="stat-next">♧ Next: Today 6:00<br />&nbsp;&nbsp;&nbsp;&nbsp;PM</div>
+            </div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Upcoming</div>
-            <div class="stat-number">
-                <asp:Label ID="lblUpcomingBookings" runat="server" Text="0" />
-            </div>
-            <div class="stat-next">
-                ♧ Next: Today 6:00<br />&nbsp;&nbsp;&nbsp;&nbsp;PM
-            </div>
-        </div>
+        <asp:Button ID="btnAddTicket" runat="server" CssClass="add-ticket-btn"
+            Text="✚  Add Ticket" OnClick="btnAddTicket_Click" CausesValidation="false" />
     </div>
 
 
     <div class="ticket-container">
-
         <div class="ticket-toolbar">
             <div class="ticket-tabs">
                 <asp:LinkButton runat="server" CssClass="ticket-tab" Text="All Tickets"
-                    CommandArgument="all" OnClick="FilterTab_Click" />
+                    CommandArgument="all" OnClick="FilterTab_Click" CausesValidation="false" />
                 <asp:LinkButton runat="server" CssClass="ticket-tab" Text="Upcoming"
-                    CommandArgument="upcoming" OnClick="FilterTab_Click" />
+                    CommandArgument="upcoming" OnClick="FilterTab_Click" CausesValidation="false" />
                 <asp:LinkButton runat="server" CssClass="ticket-tab" Text="Past"
-                    CommandArgument="past" OnClick="FilterTab_Click" />
+                    CommandArgument="past" OnClick="FilterTab_Click" CausesValidation="false" />
             </div>
 
             <div class="search-wrapper">
@@ -423,7 +305,7 @@
                     <div class="actions">
                         <asp:LinkButton runat="server" CssClass="action-btn"
                             CommandName="ViewTicket" CommandArgument='<%# Eval("Id") %>'
-                            ToolTip="View">
+                            CausesValidation="false" ToolTip="View">
                             <svg viewBox="0 0 24 24">
                                 <path d="M2.5 12s3.5-5 9.5-5 9.5 5 9.5 5-3.5 5-9.5 5-9.5-5-9.5-5z"></path>
                                 <circle cx="12" cy="12" r="2.5"></circle>
@@ -432,7 +314,7 @@
 
                         <asp:LinkButton runat="server" CssClass="action-btn"
                             CommandName="EditTicket" CommandArgument='<%# Eval("Id") %>'
-                            ToolTip="Edit">
+                            CausesValidation="false" ToolTip="Edit">
                             <svg viewBox="0 0 24 24">
                                 <path d="M4 20h4L19 9l-4-4L4 16v4z"></path>
                                 <path d="M13.5 6.5l4 4"></path>
@@ -441,7 +323,7 @@
 
                         <asp:LinkButton runat="server" CssClass="action-btn delete-btn"
                             CommandName="DeleteTicket" CommandArgument='<%# Eval("Id") %>'
-                            ToolTip="Delete"
+                            CausesValidation="false" ToolTip="Delete"
                             OnClientClick="return confirm('Delete this ticket?');">
                             <svg viewBox="0 0 24 24">
                                 <path d="M4 7h16"></path>
@@ -465,64 +347,45 @@
             </div>
             <div class="footer-right">
                 <asp:Label ID="lblShowingText" runat="server" />
-                <button type="button" class="page-arrow" onclick="alert('First page');">‹</button>
-                <button type="button" class="page-arrow" onclick="alert('Next page');">›</button>
             </div>
         </div>
-
     </div>
 
 </div>
 
 
-<div id="ticketModal" class="ticket-modal-overlay">
+<!-- ============ ADD / EDIT MODAL ============ -->
+<asp:Panel ID="TicketModal" runat="server" CssClass="ticket-modal-overlay" ClientIDMode="Static">
     <div class="ticket-modal">
-
         <div class="modal-header">
-            <div class="modal-title" id="ticketModalTitle">Add Ticket</div>
-            <button type="button" class="modal-close" onclick="closeTicketModal();">×</button>
+            <asp:Label ID="ticketModalTitle" runat="server" CssClass="modal-title" Text="Add Ticket" ClientIDMode="Static" />
+            <asp:Button ID="btnCloseModal" runat="server" CssClass="modal-close" Text="×"
+                OnClick="btnCancelTicket_Click" CausesValidation="false" />
         </div>
 
         <div class="modal-body">
-
             <div class="modal-field">
                 <label>Movie Name</label>
                 <asp:TextBox ID="txtModalMovie" runat="server" ClientIDMode="Static" placeholder="e.g. Inception" />
-                <asp:RequiredFieldValidator ID="rfvMovie" runat="server"
-                    ControlToValidate="txtModalMovie"
-                    ErrorMessage="Movie name is required."
-                    CssClass="error-msg" Display="Dynamic"
-                    ValidationGroup="TicketGroup" />
+                <asp:Label ID="lblMovieError" runat="server" CssClass="error-msg" />
             </div>
 
             <div class="modal-field">
                 <label>Venue</label>
                 <asp:TextBox ID="txtModalVenue" runat="server" ClientIDMode="Static" placeholder="e.g. Cinepolis, Rajkot" />
-                <asp:RequiredFieldValidator ID="rfvVenue" runat="server"
-                    ControlToValidate="txtModalVenue"
-                    ErrorMessage="Venue is required."
-                    CssClass="error-msg" Display="Dynamic"
-                    ValidationGroup="TicketGroup" />
+                <asp:Label ID="lblVenueError" runat="server" CssClass="error-msg" />
             </div>
 
             <div class="modal-field">
                 <label>Ticket ID</label>
                 <asp:TextBox ID="txtModalTicketId" runat="server" ClientIDMode="Static" placeholder="e.g. CP94821039" />
-                <asp:RequiredFieldValidator ID="rfvTicketId" runat="server"
-                    ControlToValidate="txtModalTicketId"
-                    ErrorMessage="Ticket ID is required."
-                    CssClass="error-msg" Display="Dynamic"
-                    ValidationGroup="TicketGroup" />
+                <asp:Label ID="lblTicketIdError" runat="server" CssClass="error-msg" />
             </div>
 
             <div class="modal-field">
                 <label>Seats</label>
                 <asp:TextBox ID="txtModalSeats" runat="server" ClientIDMode="Static" placeholder="e.g. E7, E8" />
-                <asp:RequiredFieldValidator ID="rfvSeats" runat="server"
-                    ControlToValidate="txtModalSeats"
-                    ErrorMessage="Seats are required."
-                    CssClass="error-msg" Display="Dynamic"
-                    ValidationGroup="TicketGroup" />
+                <asp:Label ID="lblSeatsError" runat="server" CssClass="error-msg" />
             </div>
 
             <div class="modal-field">
@@ -532,17 +395,64 @@
                     <asp:ListItem Value="Past">Past</asp:ListItem>
                 </asp:DropDownList>
             </div>
-
         </div>
 
         <div class="modal-footer">
-            <button type="button" class="modal-cancel" onclick="closeTicketModal();">Cancel</button>
+            <asp:Button ID="btnCancelModal" runat="server" CssClass="modal-cancel" Text="Cancel"
+                OnClick="btnCancelTicket_Click" CausesValidation="false" />
             <asp:Button ID="btnSaveTicket" runat="server" ClientIDMode="Static"
                 CssClass="modal-save" Text="Save Ticket"
-                OnClick="btnSaveTicket_Click" ValidationGroup="TicketGroup" />
+                OnClick="btnSaveTicket_Click" />
+        </div>
+    </div>
+</asp:Panel>
+
+
+<!-- ============ ⭐ VIEW MODAL — TABLE VIEW ============ -->
+<asp:Panel ID="ViewModal" runat="server" CssClass="view-modal-overlay" ClientIDMode="Static">
+    <div class="view-modal">
+
+        <div class="view-modal-header">
+            <asp:Label ID="viewModalTitle" runat="server" CssClass="view-modal-title" Text="Ticket Details" />
+            <asp:Button ID="btnCloseView" runat="server" CssClass="view-modal-close" Text="×"
+                OnClick="btnCloseView_Click" CausesValidation="false" />
+        </div>
+
+        <div class="view-modal-body">
+            <table class="view-table">
+                <tr>
+                    <td>Ticket ID</td>
+                    <td><asp:Label ID="lblViewTicketId" runat="server" /></td>
+                </tr>
+                <tr>
+                    <td>Movie Name</td>
+                    <td><asp:Label ID="lblViewMovieName" runat="server" /></td>
+                </tr>
+                <tr>
+                    <td>Venue</td>
+                    <td><asp:Label ID="lblViewVenue" runat="server" /></td>
+                </tr>
+                <tr>
+                    <td>Show Date &amp; Time</td>
+                    <td><asp:Label ID="lblViewShowDate" runat="server" /></td>
+                </tr>
+                <tr>
+                    <td>Seats</td>
+                    <td><asp:Label ID="lblViewSeats" runat="server" /></td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td><asp:Label ID="lblViewStatus" runat="server" /></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="view-modal-footer">
+            <asp:Button ID="btnCloseViewFooter" runat="server" CssClass="modal-cancel" Text="Close"
+                OnClick="btnCloseView_Click" CausesValidation="false" />
         </div>
 
     </div>
-</div>
+</asp:Panel>
 
 </asp:Content>
