@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web.UI;
@@ -40,10 +40,45 @@ namespace WebApplication2
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // ⭐ C# thi header ma "Now Showing" add karo
+            RegisterHeaderTitle();
+
             if (!IsPostBack)
             {
                 BindMovies();
             }
+        }
+
+        // =========================================
+        // ⭐ HEADER TITLE — C# thi Register
+        // =========================================
+        private void RegisterHeaderTitle()
+        {
+            string script = @"
+                (function() {
+                    var header = document.querySelector('.cine-header');
+                    var searchArea = document.querySelector('.header-search-area');
+                    
+                    if (header && searchArea && !document.getElementById('moviesHeaderTitle')) {
+                        var titleEl = document.createElement('div');
+                        titleEl.id = 'moviesHeaderTitle';
+                        titleEl.innerText = 'Now Showing';
+                        titleEl.style.color = '#FFC3B9';
+                        titleEl.style.fontSize = '22px';
+                        titleEl.style.fontWeight = '500';
+                        titleEl.style.marginLeft = '10px';
+                        titleEl.style.marginRight = '10px';
+                        titleEl.style.whiteSpace = 'nowrap';
+                        titleEl.style.flexShrink = '0';
+                        header.insertBefore(titleEl, searchArea);
+                    }
+
+                    var hamburger = document.getElementById('mainHamburger');
+                    if (hamburger) { hamburger.style.display = 'flex'; }
+                })();
+            ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "moviesHeaderTitle", script, true);
         }
 
         private void BindMovies()
