@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Movies" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="movies.aspx.cs" Inherits="WebApplication2.movies" %>
+<%@ Page Title="Movies" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="movies.aspx.cs" Inherits="WebApplication2.movies" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 <style>
@@ -58,7 +58,7 @@
     .movie-modal-body { padding: 20px; }
     .modal-field { margin-bottom: 15px; }
     .modal-field label { display: block; color: #888888; font-size: 9px; text-transform: uppercase; margin-bottom: 7px; }
-    .modal-field input, .modal-field select { width: 100%; height: 36px; background: #151515; border: 1px solid #3b3b3b; border-radius: 4px; color: #ffffff; outline: none; padding: 0 10px; font-size: 11px; }
+    .modal-field input, .modal-field select { width: 100%; height: 36px; background: #151515; border: 1px solid #3b3b3b; border-radius: 4px; color: #ffffff; outline: none; padding: 0 10px; font-size: 11px; box-sizing: border-box; }
     .modal-field input:focus, .modal-field select:focus { border-color: #777777; }
     .error-msg { display: block; color: #ff6666; font-size: 10px; margin-top: 5px; }
     .movie-modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #363636; }
@@ -67,7 +67,7 @@
     .modal-save { background: #ff5f5f; color: #ffffff; font-weight: 600; }
     .modal-save:hover { background: #ff4141; }
 
-    .view-detail-value { width: 100%; min-height: 36px; background: #151515; border: 1px solid #3b3b3b; border-radius: 4px; color: #ffffff; padding: 9px 10px; font-size: 11px; display: flex; align-items: center; }
+    .view-detail-value { width: 100%; min-height: 36px; background: #151515; border: 1px solid #3b3b3b; border-radius: 4px; color: #ffffff; padding: 9px 10px; font-size: 11px; display: flex; align-items: center; box-sizing: border-box; }
 
     @media(max-width: 1100px) {
         .movie-area { flex-direction: column; }
@@ -78,28 +78,6 @@
 
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var hamburger = document.getElementById("mainHamburger");
-            if (hamburger) { hamburger.style.display = "flex"; }
-
-            var header = document.querySelector(".cine-header");
-            var searchArea = document.querySelector(".header-search-area");
-
-            if (header && searchArea && !document.getElementById("moviesHeaderTitle")) {
-                var titleEl = document.createElement("div");
-                titleEl.id = "moviesHeaderTitle";
-                titleEl.innerText = "Now Showing";
-                titleEl.style.color = "#FFC3B9";
-                titleEl.style.fontSize = "22px";
-                titleEl.style.fontWeight = "500";
-                titleEl.style.marginLeft = "10px";
-                titleEl.style.marginRight = "10px";
-                header.insertBefore(titleEl, searchArea);
-            }
-        });
-    </script>
 
     <div class="movies-main">
 
