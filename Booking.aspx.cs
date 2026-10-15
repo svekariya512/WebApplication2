@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -13,8 +14,16 @@ namespace WebApplication2
             set { ViewState["Filter"] = value; }
         }
 
+        private int CurrentPage
+        {
+            get { return Convert.ToInt32(ViewState["Page"] ?? 1); }
+            set { ViewState["Page"] = value; }
+        }
+
+        private const int PageSize = 5;
+
         // =========================================
-        // IN-MEMORY DATA (Session-Based)
+        // SESSION-BASED DATA
         // =========================================
         private List<BookingItem> BookingList
         {
@@ -24,66 +33,11 @@ namespace WebApplication2
                 {
                     Session["BookingList"] = new List<BookingItem>
                     {
-                        new BookingItem
-                        {
-                            Id = 1,
-                            BookingId = "BK10001",
-                            MovieName = "Inception",
-                            CustomerName = "Raj Patel",
-                            Theater = "Cineplus Downtown, Mumbai",
-                            ShowDate = DateTime.Now.AddDays(2),
-                            Seats = "E7, E8",
-                            Amount = 500,
-                            Status = "SUCCESS"
-                        },
-                        new BookingItem
-                        {
-                            Id = 2,
-                            BookingId = "BK10002",
-                            MovieName = "Interstellar",
-                            CustomerName = "Priya Shah",
-                            Theater = "Cineplus Westside, Ahmedabad",
-                            ShowDate = DateTime.Now.AddDays(-5),
-                            Seats = "A1, A2",
-                            Amount = 750,
-                            Status = "SUCCESS"
-                        },
-                        new BookingItem
-                        {
-                            Id = 3,
-                            BookingId = "BK10003",
-                            MovieName = "The Dark Knight",
-                            CustomerName = "Amit Kumar",
-                            Theater = "Cineplus Rajkot",
-                            ShowDate = DateTime.Now.AddDays(1),
-                            Seats = "F10",
-                            Amount = 350,
-                            Status = "PENDING"
-                        },
-                        new BookingItem
-                        {
-                            Id = 4,
-                            BookingId = "BK10004",
-                            MovieName = "Dune: Part Two",
-                            CustomerName = "Sneha Joshi",
-                            Theater = "Cineplus Downtown, Mumbai",
-                            ShowDate = DateTime.Now.AddDays(-2),
-                            Seats = "B5, B6",
-                            Amount = 900,
-                            Status = "FAILED"
-                        },
-                        new BookingItem
-                        {
-                            Id = 5,
-                            BookingId = "BK10005",
-                            MovieName = "Oppenheimer",
-                            CustomerName = "Kiran Mehta",
-                            Theater = "Cineplus Westside, Ahmedabad",
-                            ShowDate = DateTime.Now.AddDays(3),
-                            Seats = "C3, C4, C5",
-                            Amount = 1200,
-                            Status = "SUCCESS"
-                        }
+                        new BookingItem { Id = 1, BookingId = "CP90481239", MovieName = "Jhamkudi", CustomerName = "Rahul Sharma", Theater = "Cinépolis Alpha One", ShowDate = new DateTime(2024, 8, 14, 18, 0, 0), Seats = "E7, E8", Amount = 700, Status = "SUCCESS" },
+                        new BookingItem { Id = 2, BookingId = "CP90481240", MovieName = "Deadpool & Wolverine", CustomerName = "Priya Patel", Theater = "PVR Acropolis", ShowDate = new DateTime(2024, 8, 14, 21, 30, 0), Seats = "P1, P2", Amount = 800, Status = "PENDING" },
+                        new BookingItem { Id = 3, BookingId = "CP90481241", MovieName = "Stree 2", CustomerName = "Amit Singh", Theater = "INOX: City Gold", ShowDate = new DateTime(2024, 8, 15, 12, 15, 0), Seats = "G4, G5, G6", Amount = 1050, Status = "PENDING" },
+                        new BookingItem { Id = 4, BookingId = "CP90481243", MovieName = "Kalki 2898 AD", CustomerName = "Vikas Reddy", Theater = "PVR Acropolis", ShowDate = new DateTime(2024, 8, 15, 20, 0, 0), Seats = "A1, A2", Amount = 800, Status = "PENDING" },
+                        new BookingItem { Id = 5, BookingId = "CP90481244", MovieName = "Munjya", CustomerName = "Karan Johar", Theater = "INOX: City Gold", ShowDate = new DateTime(2024, 8, 16, 11, 0, 0), Seats = "F10", Amount = 350, Status = "SUCCESS" }
                     };
                 }
                 return (List<BookingItem>)Session["BookingList"];
@@ -110,11 +64,11 @@ namespace WebApplication2
 
             foreach (BookingItem b in BookingList)
             {
-                // Filter by status
+                // Status filter
                 if (CurrentFilter != "ALL" && b.Status != CurrentFilter)
                     continue;
 
-                // Filter by search
+                // Search filter
                 if (!string.IsNullOrEmpty(search))
                 {
                     if (!b.BookingId.ToLower().Contains(search) &&
@@ -125,13 +79,27 @@ namespace WebApplication2
                 filtered.Add(b);
             }
 
-            // Order by Id DESC
-            filtered.Sort((a, b) => b.Id.CompareTo(a.Id));
+            // Pagination
+            int totalItems = filtered.Count;
+            int totalPages = Math.Max(1, (int)Math.Ceiling((double)totalItems / PageSize));
 
-            rptBookings.DataSource = filtered;
+            if (CurrentPage > totalPages) CurrentPage = totalPages;
+            if (CurrentPage < 1) CurrentPage = 1;
+
+            int startIndex = (CurrentPage - 1) * PageSize;
+            List<BookingItem> paged = filtered.GetRange(
+                startIndex,
+                Math.Min(PageSize, totalItems - startIndex)
+            );
+
+            rptBookings.DataSource = paged;
             rptBookings.DataBind();
 
-            lblFilterStatus.Text = "Filter: " + CurrentFilter;
+            lblShowingText.Text = "Showing " + (startIndex + 1) + " to " +
+                (startIndex + paged.Count) + " of " + totalItems + " entries";
+
+            btnPrev.Enabled = CurrentPage > 1;
+            btnNext.Enabled = CurrentPage < totalPages;
         }
 
         // =========================================
@@ -139,20 +107,18 @@ namespace WebApplication2
         // =========================================
         private void LoadStats()
         {
-            List<BookingItem> list = BookingList;
-
             decimal totalRevenue = 0;
-            int totalTransactions = list.Count;
-            int successCount = 0;
+            int totalTransactions = BookingList.Count;
+            int successful = 0;
 
-            foreach (BookingItem b in list)
+            foreach (BookingItem b in BookingList)
             {
                 totalRevenue += b.Amount;
-                if (b.Status == "SUCCESS") successCount++;
+                if (b.Status == "SUCCESS") successful++;
             }
 
             int successRate = totalTransactions > 0
-                ? (int)Math.Round((double)successCount / totalTransactions * 100)
+                ? (int)Math.Round((double)successful / totalTransactions * 100)
                 : 0;
 
             lblTotalRevenue.Text = "Rs. " + totalRevenue.ToString("N0");
@@ -161,25 +127,86 @@ namespace WebApplication2
         }
 
         // =========================================
-        // SEARCH
+        // SEARCH — C# VALIDATION
         // =========================================
         protected void txtBookingSearch_TextChanged(object sender, EventArgs e)
         {
+            string search = txtBookingSearch.Text.Trim();
+
+            // ===== VALIDATION =====
+            if (!string.IsNullOrEmpty(search))
+            {
+                // Min length
+                if (search.Length < 2)
+                {
+                    ShowMessage("Search term must be at least 2 characters.");
+                    return;
+                }
+
+                // Max length
+                if (search.Length > 50)
+                {
+                    ShowMessage("Search term cannot exceed 50 characters.");
+                    return;
+                }
+
+                // Only valid characters
+                if (!Regex.IsMatch(search, @"^[a-zA-Z0-9\s\-]+$"))
+                {
+                    ShowMessage("Search contains invalid characters.");
+                    txtBookingSearch.Text = "";
+                    return;
+                }
+            }
+
+            CurrentPage = 1;
             LoadBookings();
         }
 
         // =========================================
-        // FILTER TAB
+        // FILTERS
         // =========================================
-        protected void FilterTab_Click(object sender, EventArgs e)
+        protected void btnAll_Click(object sender, EventArgs e)
         {
-            LinkButton btn = (LinkButton)sender;
-            CurrentFilter = btn.CommandArgument;
+            CurrentFilter = "ALL";
+            CurrentPage = 1;
+            LoadBookings();
+        }
+
+        protected void btnPending_Click(object sender, EventArgs e)
+        {
+            CurrentFilter = "PENDING";
+            CurrentPage = 1;
+            LoadBookings();
+        }
+
+        protected void btnSuccess_Click(object sender, EventArgs e)
+        {
+            CurrentFilter = "SUCCESS";
+            CurrentPage = 1;
             LoadBookings();
         }
 
         // =========================================
-        // REPEATER — View / Edit / Delete
+        // PAGINATION
+        // =========================================
+        protected void btnPrev_Click(object sender, EventArgs e)
+        {
+            if (CurrentPage > 1)
+            {
+                CurrentPage--;
+                LoadBookings();
+            }
+        }
+
+        protected void btnNext_Click(object sender, EventArgs e)
+        {
+            CurrentPage++;
+            LoadBookings();
+        }
+
+        // =========================================
+        // REPEATER — VIEW / DELETE
         // =========================================
         protected void rptBookings_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
@@ -188,134 +215,61 @@ namespace WebApplication2
             BookingItem b = list.Find(x => x.Id == id);
             if (b == null) return;
 
-            // DELETE
-            if (e.CommandName == "DeleteBooking")
+            // ===== VIEW =====
+            if (e.CommandName == "ViewBooking")
             {
+                txtViewBookingId.Text = b.BookingId;
+                txtViewMovie.Text = b.MovieName;
+                txtViewCustomer.Text = b.CustomerName;
+                txtViewTheater.Text = b.Theater;
+                txtViewDateTime.Text = b.ShowDate.ToString("dd MMM yyyy, hh:mm tt");
+                txtViewSeats.Text = b.Seats;
+                txtViewAmount.Text = "Rs. " + b.Amount.ToString("N0");
+                txtViewStatus.Text = b.Status;
+
+                BookingModal.CssClass = "booking-modal-overlay show";
+            }
+            // ===== DELETE =====
+            else if (e.CommandName == "DeleteBooking")
+            {
+                // ===== VALIDATION =====
+                if (b.BookingId.Length < 5)
+                {
+                    ShowMessage("Invalid booking ID.");
+                    return;
+                }
+
                 list.RemoveAll(x => x.Id == id);
                 BookingList = list;
 
                 LoadBookings();
                 LoadStats();
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Booking deleted successfully.');", true);
-            }
-            // VIEW / EDIT
-            else if (e.CommandName == "ViewBooking" || e.CommandName == "EditBooking")
-            {
-                txtBookingId.Text = b.BookingId;
-                txtMovie.Text = b.MovieName;
-                txtCustomer.Text = b.CustomerName;
-                txtTheater.Text = b.Theater;
-                txtDateTime.Text = b.ShowDate.ToString("yyyy-MM-dd HH:mm");
-                txtSeats.Text = b.Seats;
-                txtAmount.Text = b.Amount.ToString("0");
-                ddlStatus.SelectedValue = b.Status;
-                hdnEditBookingId.Value = b.Id.ToString();
-
-                if (e.CommandName == "ViewBooking")
-                {
-                    txtMovie.ReadOnly = true;
-                    txtCustomer.ReadOnly = true;
-                    txtTheater.ReadOnly = true;
-                    txtDateTime.ReadOnly = true;
-                    txtSeats.ReadOnly = true;
-                    txtAmount.ReadOnly = true;
-                    ddlStatus.Enabled = false;
-                    btnSaveBooking.Visible = false;
-
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "openView",
-                        "document.getElementById('modalTitleText').innerText='View Booking';" +
-                        "document.getElementById('bookingModal').classList.add('show');", true);
-                }
-                else
-                {
-                    txtMovie.ReadOnly = false;
-                    txtCustomer.ReadOnly = false;
-                    txtTheater.ReadOnly = false;
-                    txtDateTime.ReadOnly = false;
-                    txtSeats.ReadOnly = false;
-                    txtAmount.ReadOnly = false;
-                    ddlStatus.Enabled = true;
-                    btnSaveBooking.Visible = true;
-
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "openEdit",
-                        "document.getElementById('modalTitleText').innerText='Edit Booking';" +
-                        "document.getElementById('bookingModal').classList.add('show');", true);
-                }
+                ShowMessage("Booking deleted successfully.");
             }
         }
 
         // =========================================
-        // SAVE BOOKING (Update)
+        // CLOSE MODAL
         // =========================================
-        protected void btnSaveBooking_Click(object sender, EventArgs e)
+        protected void btnCloseModal_Click(object sender, EventArgs e)
         {
-            if (!Page.IsValid) return;
+            BookingModal.CssClass = "booking-modal-overlay";
+        }
 
-            string editId = hdnEditBookingId.Value;
-            if (string.IsNullOrEmpty(editId)) return;
+        // =========================================
+        // HELPERS
+        // =========================================
+        private void ShowMessage(string message)
+        {
+            lblMessage.Text = message;
+            lblMessage.Visible = true;
 
-            string movie = txtMovie.Text.Trim();
-            string customer = txtCustomer.Text.Trim();
-            string theater = txtTheater.Text.Trim();
-            string dateTime = txtDateTime.Text.Trim();
-            string seats = txtSeats.Text.Trim();
-            string status = ddlStatus.SelectedValue;
-
-            decimal amount;
-            if (!decimal.TryParse(txtAmount.Text.Trim(), out amount))
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Invalid amount.');", true);
-                return;
-            }
-
-            if (string.IsNullOrEmpty(movie) || string.IsNullOrEmpty(customer))
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Movie and Customer are required.');", true);
-                return;
-            }
-
-            try
-            {
-                List<BookingItem> list = BookingList;
-                int id = Convert.ToInt32(editId);
-                BookingItem b = list.Find(x => x.Id == id);
-
-                if (b != null)
-                {
-                    b.MovieName = movie;
-                    b.CustomerName = customer;
-                    b.Theater = theater;
-                    b.ShowDate = Convert.ToDateTime(dateTime);
-                    b.Seats = seats;
-                    b.Amount = amount;
-                    b.Status = status;
-                }
-
-                BookingList = list;
-                hdnEditBookingId.Value = "";
-
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Booking updated successfully.');" +
-                    "document.getElementById('bookingModal').classList.remove('show');", true);
-
-                LoadBookings();
-                LoadStats();
-            }
-            catch (Exception ex)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Error: " + ex.Message.Replace("'", "") + "');", true);
-            }
+            string script = "setTimeout(function(){ var m=document.getElementById('" + lblMessage.ClientID + "'); if(m) m.style.display='none'; }, 3000);";
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "hideMsg", script, true);
         }
     }
 
-    // =========================================
-    // MODEL CLASS
-    // =========================================
     public class BookingItem
     {
         public int Id { get; set; }
