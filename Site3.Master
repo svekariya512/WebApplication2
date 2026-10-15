@@ -1,0 +1,281 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site3.Master.cs" Inherits="WebApplication2.Site2" %>
+
+<!DOCTYPE html>
+<html lang="gu">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - CinePulse</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body {
+            background-color: #0b0b0b;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- Navbar --- */
+        .navbar-custom {
+            background-color: rgba(10, 10, 10, 0.95);
+            border-bottom: 1px solid #222;
+            padding: 15px 30px;
+        }
+
+        .navbar-custom .nav-link {
+            color: #bbb !important;
+            margin-right: 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            text-decoration: none !important;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #ff2a2a !important;
+        }
+
+        .navbar-custom .nav-link.active-link {
+            color: #ff2a2a !important;
+            border-bottom: 2px solid #ff2a2a !important;
+            padding-bottom: 3px !important;
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, #3471cf, #b80710);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 20px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .btn-red:hover {
+            background: linear-gradient(135deg, #3471cf, #d40812);
+            color: white;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #050505;
+            border-top: 1px solid #1a1a1a;
+            padding: 30px 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #aaa;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        footer a:hover { color: #3471cf; }
+
+        /* ============================================
+           POPUP MODAL (Pure CSS + ASP.NET Panel)
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .premium-modal {
+            background: #0f0f0f;
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 40px 30px 30px;
+            color: #fff;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .btn-close-custom {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: #888;
+            font-size: 1.2rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close-custom:hover {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .premium-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .premium-sub {
+            font-size: 0.9rem;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .btn-login-modal {
+            background: #e50914;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login-modal:hover {
+            background: #ff1a25;
+            color: #fff;
+        }
+
+        .btn-signup-modal {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-signup-modal:hover {
+            background: #1a1a1a;
+            color: #fff;
+            border-color: #555;
+        }
+    </style>
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <!-- Header / Navigation Bar -->
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+                <div class="container-fluid">
+                    <a class="navbar-brand fs-4 fw-bold d-flex align-items-center" href="Home111.aspx">
+                        <img src="Images/logo1.png" alt="CinePulse Logo" style="height: 50px; margin-right: 20px;" />
+                    </a>
+
+                    <div class="collapse navbar-collapse" id="navbarContent">
+                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <asp:HyperLink ID="lnkHome" runat="server" CssClass="nav-link" NavigateUrl="Home111.aspx">Home</asp:HyperLink>
+                            </li>
+                            <li class="nav-item">
+                                <asp:HyperLink ID="lnkAbout" runat="server" CssClass="nav-link" NavigateUrl="About111.aspx">About</asp:HyperLink>
+                            </li>
+                            <li class="nav-item">
+                                <asp:HyperLink ID="lnkGallery" runat="server" CssClass="nav-link" NavigateUrl="Movies111.aspx">Gallery</asp:HyperLink>
+                            </li>
+                            <li class="nav-item">
+                                <asp:HyperLink ID="lnkTheater" runat="server" CssClass="nav-link" NavigateUrl="Theater111.aspx">Theater</asp:HyperLink>
+                            </li>
+                            <li class="nav-item">
+                                <asp:HyperLink ID="lnkContact" runat="server" CssClass="nav-link" NavigateUrl="Contact111.aspx">Contact</asp:HyperLink>
+                            </li>
+                        </ul>
+
+                        <div class="d-flex align-items-center">
+                            <!-- Login - Popup ખોલે -->
+                            <asp:LinkButton ID="btnNavLogin" runat="server" CssClass="text-light me-4 text-decoration-none fw-semibold"
+                                OnClick="btnOpenModal_Click">
+                                <i class="fa-solid fa-magnifying-glass me-1"></i> Login
+                            </asp:LinkButton>
+
+                            <!-- Sign Up - Popup ખોલે -->
+                            <asp:LinkButton ID="btnNavSignup" runat="server" CssClass="btn btn-red"
+                                OnClick="btnOpenModal_Click">
+                                Sign Up
+                            </asp:LinkButton>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main role="main" style="margin-top: 76px;">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <p class="mb-0">&copy; 2026 CinePulse. All rights reserved.</p>
+                </div>
+                <div>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Help Center</a>
+                    <a href="#">Career</a>
+                </div>
+            </div>
+        </footer>
+
+        <!-- ============================================
+             PREMIUM POPUP (asp:Panel — JavaScript વગર)
+             ============================================ -->
+        <asp:Panel ID="pnlPremiumModal" runat="server" Visible="false" CssClass="modal-overlay">
+            <div class="premium-modal">
+
+                <asp:LinkButton ID="btnCloseModal" runat="server" CssClass="btn-close-custom"
+                    OnClick="btnCloseModal_Click" CausesValidation="false">
+                    <i class="fa-solid fa-xmark"></i>
+                </asp:LinkButton>
+
+                <div class="mb-3">
+                    <img src="Images/logo1.png" alt="CinePulse" style="height: 40px;" />
+                </div>
+
+                <h4 class="premium-title">Unlock Your Premium Experience</h4>
+                <p class="premium-sub">
+                    Please login or sign up to complete your booking and enjoy exclusive benefits.
+                </p>
+
+                <div class="mt-4 d-grid gap-3">
+                    <asp:Button ID="btnModalLogin" runat="server" Text="Login →"
+                        CssClass="btn btn-login-modal" OnClick="btnModalLogin_Click" />
+
+                    <asp:Button ID="btnModalSignup" runat="server" Text="Sign Up"
+                        CssClass="btn btn-signup-modal" OnClick="btnModalSignup_Click" />
+                </div>
+
+            </div>
+        </asp:Panel>
+
+    </form>
+</body>
+</html>
