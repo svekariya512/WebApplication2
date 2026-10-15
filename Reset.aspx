@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Reset Password" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" %>
+<%@ Page Title="Reset Password" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="Reset.aspx.cs" Inherits="WebApplication2.Reset" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 
@@ -11,14 +11,12 @@
         color: #ffffff;
     }
 
-    /* PAGE SUBTITLE ONLY (title moved to header) */
     .reset-subtitle {
         color: #888888;
         font-size: 12px;
         margin-bottom: 25px;
     }
 
-    /* MAIN LAYOUT */
     .reset-layout {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -26,7 +24,6 @@
         max-width: 1000px;
     }
 
-    /* LEFT CARD */
     .reset-card {
         background: #171717;
         border: 1px solid #2b2b2b;
@@ -48,10 +45,7 @@
         margin-bottom: 22px;
     }
 
-    /* FORM */
-    .form-group {
-        margin-bottom: 17px;
-    }
+    .form-group { margin-bottom: 17px; }
 
     .form-label {
         display: block;
@@ -74,15 +68,9 @@
         transition: 0.2s;
     }
 
-    .form-input:focus {
-        border-color: #ffc3b9;
-    }
+    .form-input:focus { border-color: #ffc3b9; }
+    .form-input::placeholder { color: #555555; }
 
-    .form-input::placeholder {
-        color: #555555;
-    }
-
-    /* BUTTONS */
     .button-row {
         display: flex;
         gap: 10px;
@@ -101,10 +89,7 @@
         cursor: pointer;
         transition: 0.2s;
     }
-
-    .reset-btn:hover {
-        background: #ffb0a3;
-    }
+    .reset-btn:hover { background: #ffb0a3; }
 
     .cancel-btn {
         height: 36px;
@@ -117,12 +102,8 @@
         cursor: pointer;
         transition: 0.2s;
     }
+    .cancel-btn:hover { background: #292929; }
 
-    .cancel-btn:hover {
-        background: #292929;
-    }
-
-    /* RIGHT CARD */
     .security-card {
         background: #171717;
         border: 1px solid #2b2b2b;
@@ -149,19 +130,9 @@
         font-size: 16px;
     }
 
-    .security-title {
-        font-size: 14px;
-        color: #eeeeee;
-        font-weight: 600;
-    }
+    .security-title { font-size: 14px; color: #eeeeee; font-weight: 600; }
+    .security-small { color: #666666; font-size: 9px; margin-top: 3px; }
 
-    .security-small {
-        color: #666666;
-        font-size: 9px;
-        margin-top: 3px;
-    }
-
-    /* REQUIREMENTS */
     .requirement {
         display: flex;
         align-items: center;
@@ -169,10 +140,7 @@
         padding: 12px 0;
         border-bottom: 1px solid #252525;
     }
-
-    .requirement:last-child {
-        border-bottom: none;
-    }
+    .requirement:last-child { border-bottom: none; }
 
     .check {
         width: 20px;
@@ -187,12 +155,8 @@
         flex-shrink: 0;
     }
 
-    .requirement-text {
-        color: #999999;
-        font-size: 10px;
-    }
+    .requirement-text { color: #999999; font-size: 10px; }
 
-    /* WARNING */
     .security-note {
         margin-top: 20px;
         padding: 12px;
@@ -204,9 +168,8 @@
         line-height: 15px;
     }
 
-    /* SUCCESS MESSAGE */
-    .success-message {
-        display: none;
+    .msg-success {
+        display: block;
         margin-top: 15px;
         padding: 10px 12px;
         border-radius: 5px;
@@ -215,35 +178,20 @@
         color: #4ade80;
         font-size: 10px;
     }
-
-    /* DYNAMIC HAMBURGER */
-    .home-hamburger {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 4px;
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        flex-shrink: 0;
-    }
-    .home-hamburger span {
+    .msg-error {
         display: block;
-        width: 20px;
-        height: 2px;
-        background: #FFC3B9;
-        border-radius: 2px;
-        transition: 0.2s;
+        margin-top: 15px;
+        padding: 10px 12px;
+        border-radius: 5px;
+        background: rgba(255,102,102,.10);
+        border: 1px solid rgba(255,102,102,.30);
+        color: #ff6666;
+        font-size: 10px;
     }
-    .home-hamburger:hover span { background: #ffb0a3; }
 
     @media screen and (max-width: 800px) {
-        .reset-layout {
-            grid-template-columns: 1fr;
-        }
-        .reset-page {
-            padding: 20px;
-        }
+        .reset-layout { grid-template-columns: 1fr; }
+        .reset-page { padding: 20px; }
     }
 
 </style>
@@ -253,159 +201,84 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <!-- JAVASCRIPT: Show hamburger + Inject "Reset Password" title in header -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            // 1. Show hamburger menu
-            var hamburger = document.getElementById("mainHamburger");
-            if (hamburger) {
-                hamburger.style.display = "flex";
-            }
-
-            // 2. Inject "Reset Password" title into header
-            var header = document.querySelector(".cine-header");
-            var searchArea = document.querySelector(".header-search-area");
-
-            if (header && searchArea) {
-                var oldTitle = document.getElementById("resetHeaderTitle");
-                if (!oldTitle) {
-                    var titleEl = document.createElement("div");
-                    titleEl.id = "resetHeaderTitle";
-                    titleEl.innerText = "Reset Password";
-                    titleEl.style.color = "#FFC3B9";
-                    titleEl.style.fontSize = "22px";
-                    titleEl.style.fontWeight = "500";
-                    titleEl.style.letterSpacing = "0.5px";
-                    titleEl.style.whiteSpace = "nowrap";
-                    titleEl.style.flexShrink = "0";
-                    titleEl.style.marginLeft = "10px";
-                    titleEl.style.marginRight = "10px";
-
-                    header.insertBefore(titleEl, searchArea);
-                }
-            }
-        });
-    </script>
-
-
     <div class="reset-page">
 
-        <!-- PAGE SUBTITLE ONLY -->
         <div class="reset-subtitle">
             Update your CinePulse admin account password securely.
         </div>
 
-
-        <!-- MAIN LAYOUT -->
         <div class="reset-layout">
-
 
             <!-- RESET FORM -->
             <div class="reset-card">
 
-                <div class="card-title">
-                    Change Password
-                </div>
+                <div class="card-title">Change Password</div>
 
                 <div class="card-description">
                     Enter your current password and create a new secure
                     password for your account.
                 </div>
 
-
-                <!-- CURRENT PASSWORD -->
                 <div class="form-group">
-                    <label class="form-label">
-                        Current Password
-                    </label>
-                    <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password" />
+                    <label class="form-label">Current Password</label>
+                    <asp:TextBox ID="txtCurrentPassword" runat="server" CssClass="form-input"
+                        TextMode="Password" placeholder="Enter current password" />
                 </div>
 
-
-                <!-- NEW PASSWORD -->
                 <div class="form-group">
-                    <label class="form-label">
-                        New Password
-                    </label>
-                    <input type="password" id="newPassword" class="form-input" placeholder="Enter new password" />
+                    <label class="form-label">New Password</label>
+                    <asp:TextBox ID="txtNewPassword" runat="server" CssClass="form-input"
+                        TextMode="Password" placeholder="Enter new password" />
                 </div>
 
-
-                <!-- CONFIRM PASSWORD -->
                 <div class="form-group">
-                    <label class="form-label">
-                        Confirm New Password
-                    </label>
-                    <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm new password" />
+                    <label class="form-label">Confirm New Password</label>
+                    <asp:TextBox ID="txtConfirmPassword" runat="server" CssClass="form-input"
+                        TextMode="Password" placeholder="Confirm new password" />
                 </div>
 
-
-                <!-- BUTTONS -->
                 <div class="button-row">
-                    <button type="button" class="reset-btn" onclick="resetPassword();">
-                        Reset Password
-                    </button>
-                    <button type="button" class="cancel-btn" onclick="window.history.back();">
-                        Cancel
-                    </button>
+                    <asp:Button ID="btnReset" runat="server" CssClass="reset-btn" Text="Reset Password"
+                        OnClick="btnReset_Click" CausesValidation="false" />
+                    <asp:Button ID="btnCancel" runat="server" CssClass="cancel-btn" Text="Cancel"
+                        OnClick="btnCancel_Click" CausesValidation="false" />
                 </div>
 
-
-                <div id="successMessage" class="success-message">
-                    ✓ Password reset successfully.
-                </div>
+                <asp:Label ID="lblMsg" runat="server" Visible="false" />
 
             </div>
 
 
-            <!-- SECURITY INFORMATION -->
+            <!-- SECURITY INFO -->
             <div class="security-card">
 
                 <div class="security-header">
                     <div class="security-icon">🔒</div>
                     <div>
-                        <div class="security-title">
-                            Password Security
-                        </div>
-                        <div class="security-small">
-                            Keep your admin account protected
-                        </div>
+                        <div class="security-title">Password Security</div>
+                        <div class="security-small">Keep your admin account protected</div>
                     </div>
                 </div>
-
 
                 <div class="requirement">
                     <div class="check">✓</div>
-                    <div class="requirement-text">
-                        Use at least 8 characters
-                    </div>
+                    <div class="requirement-text">Use at least 8 characters</div>
                 </div>
-
 
                 <div class="requirement">
                     <div class="check">✓</div>
-                    <div class="requirement-text">
-                        Include uppercase and lowercase letters
-                    </div>
+                    <div class="requirement-text">Include uppercase and lowercase letters</div>
                 </div>
-
 
                 <div class="requirement">
                     <div class="check">✓</div>
-                    <div class="requirement-text">
-                        Include at least one number
-                    </div>
+                    <div class="requirement-text">Include at least one number</div>
                 </div>
-
 
                 <div class="requirement">
                     <div class="check">✓</div>
-                    <div class="requirement-text">
-                        Avoid using easily guessed passwords
-                    </div>
+                    <div class="requirement-text">Avoid using easily guessed passwords</div>
                 </div>
-
 
                 <div class="security-note">
                     🔐 For security purposes, never share your
@@ -417,38 +290,5 @@
         </div>
 
     </div>
-
-
-<script>
-
-    function resetPassword() {
-
-        var current = document.getElementById("currentPassword").value;
-        var newPassword = document.getElementById("newPassword").value;
-        var confirmPassword = document.getElementById("confirmPassword").value;
-
-        if (current === "" || newPassword === "" || confirmPassword === "") {
-            alert("Please fill all password fields.");
-            return;
-        }
-
-        if (newPassword !== confirmPassword) {
-            alert("New password and confirm password do not match.");
-            return;
-        }
-
-        if (newPassword.length < 8) {
-            alert("Password must contain at least 8 characters.");
-            return;
-        }
-
-        document.getElementById("successMessage").style.display = "block";
-
-        document.getElementById("currentPassword").value = "";
-        document.getElementById("newPassword").value = "";
-        document.getElementById("confirmPassword").value = "";
-    }
-
-</script>
 
 </asp:Content>
