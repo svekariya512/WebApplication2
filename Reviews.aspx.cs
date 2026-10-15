@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -20,7 +20,7 @@ namespace WebApplication2
         }
 
         // =========================================
-        // IN-MEMORY DATA (No Database)
+        // IN-MEMORY DATA
         // =========================================
         private List<ReviewItem> ReviewList
         {
@@ -43,11 +43,46 @@ namespace WebApplication2
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // ⭐ C# thi header ma "Review Management" add karo
+            RegisterHeaderTitle();
+
             if (!IsPostBack)
             {
                 LoadReviews();
                 LoadStats();
             }
+        }
+
+        // =========================================
+        // HEADER TITLE — C# thi Register
+        // =========================================
+        private void RegisterHeaderTitle()
+        {
+            string script = @"
+                (function() {
+                    var header = document.querySelector('.cine-header');
+                    var searchArea = document.querySelector('.header-search-area');
+                    
+                    if (header && searchArea && !document.getElementById('reviewsHeaderTitle')) {
+                        var titleEl = document.createElement('div');
+                        titleEl.id = 'reviewsHeaderTitle';
+                        titleEl.innerText = 'Review Management';
+                        titleEl.style.color = '#FFC3B9';
+                        titleEl.style.fontSize = '22px';
+                        titleEl.style.fontWeight = '500';
+                        titleEl.style.marginLeft = '10px';
+                        titleEl.style.marginRight = '10px';
+                        titleEl.style.whiteSpace = 'nowrap';
+                        titleEl.style.flexShrink = '0';
+                        header.insertBefore(titleEl, searchArea);
+                    }
+
+                    var hamburger = document.getElementById('mainHamburger');
+                    if (hamburger) { hamburger.style.display = 'flex'; }
+                })();
+            ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "reviewsHeaderTitle", script, true);
         }
 
         // =========================================
@@ -173,10 +208,8 @@ namespace WebApplication2
 
                 btnModalApprove.Visible = r.Status != "Approved";
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "openModal",
-                    "document.getElementById('reviewModal').classList.add('show');", true);
+                ReviewModal.CssClass = "review-modal-overlay show";
             }
-
             // APPROVE
             else if (e.CommandName == "ApproveReview")
             {
@@ -186,10 +219,8 @@ namespace WebApplication2
                 LoadReviews();
                 LoadStats();
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Review approved.');", true);
+                ShowAlert("Review approved.");
             }
-
             // DELETE
             else if (e.CommandName == "DeleteReview")
             {
@@ -199,8 +230,7 @@ namespace WebApplication2
                 LoadReviews();
                 LoadStats();
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                    "alert('Review deleted.');", true);
+                ShowAlert("Review deleted.");
             }
         }
 
@@ -225,9 +255,27 @@ namespace WebApplication2
                 LoadStats();
             }
 
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "msg",
-                "alert('Review approved.');" +
-                "document.getElementById('reviewModal').classList.remove('show');", true);
+            ReviewModal.CssClass = "review-modal-overlay";
+
+            ShowAlert("Review approved.");
+        }
+
+        // =========================================
+        // ⭐ CLOSE MODAL — AA METHOD JARURI CHHE
+        // =========================================
+        protected void btnCloseModal_Click(object sender, EventArgs e)
+        {
+            ReviewModal.CssClass = "review-modal-overlay";
+        }
+
+        // =========================================
+        // HELPERS — ShowAlert
+        // =========================================
+        private void ShowAlert(string message)
+        {
+            string script = "alert('" + message.Replace("'", "\\'") + "');";
+            ScriptManager.RegisterStartupScript(this, this.GetType(),
+                "alert" + Guid.NewGuid().ToString("N"), script, true);
         }
     }
 
