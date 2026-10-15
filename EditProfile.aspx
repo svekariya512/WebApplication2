@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Edit Profile" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="EditProfile.aspx.cs" Inherits="WebApplication2.EditProfile" %>
+<%@ Page Title="Edit Profile" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="EditProfile.aspx.cs" Inherits="WebApplication2.EditProfile" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 <style>
@@ -42,44 +42,6 @@
     <asp:Label ID="lblEmail" runat="server" Visible="false" />
     <asp:Label ID="lblJoined" runat="server" Visible="false" />
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var hamburger = document.getElementById("mainHamburger");
-            if (hamburger) { hamburger.style.display = "flex"; }
-
-            var header = document.querySelector(".cine-header");
-            var searchArea = document.querySelector(".header-search-area");
-
-            if (header && searchArea && !document.getElementById("editProfileHeaderTitle")) {
-                var titleEl = document.createElement("div");
-                titleEl.id = "editProfileHeaderTitle";
-                titleEl.innerText = "Edit Profile";
-                titleEl.style.color = "#FFC3B9";
-                titleEl.style.fontSize = "22px";
-                titleEl.style.fontWeight = "500";
-                titleEl.style.whiteSpace = "nowrap";
-                titleEl.style.marginLeft = "10px";
-                titleEl.style.marginRight = "10px";
-                header.insertBefore(titleEl, searchArea);
-            }
-        });
-
-        function previewAvatar(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var icon = document.querySelector(".edit-user-icon");
-                    icon.style.backgroundImage = "url(" + e.target.result + ")";
-                    icon.style.backgroundSize = "cover";
-                    icon.style.backgroundPosition = "center";
-                    var svg = icon.querySelector("svg");
-                    if (svg) svg.style.display = "none";
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
-
     <div class="edit-page">
 
         <p class="edit-subtitle">Update your personal information and profile picture.</p>
@@ -88,13 +50,12 @@
 
             <!-- LEFT AVATAR -->
             <div class="edit-user-card">
-                <div class="edit-user-icon" onclick="document.getElementById('avatarInput').click();">
+                <div class="edit-user-icon">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
                     </svg>
                     <div class="edit-upload-overlay">📷</div>
                 </div>
-                <input type="file" id="avatarInput" style="display:none;" accept="image/*" onchange="previewAvatar(this);" />
                 <div class="edit-user-hint">Click to upload<br />new profile picture</div>
             </div>
 
