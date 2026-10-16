@@ -1,6 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace WebApplication2
 {
@@ -39,7 +40,23 @@ namespace WebApplication2
         {
             if (!IsPostBack)
             {
+                // ⭐ હેડરમાં "Edit Profile" સેટ કરવા માટે
+                SetHeaderTitle("Edit Profile");
+
                 LoadProfile();
+            }
+        }
+
+        // ⭐ હેડર ટાઈટલ સેટ કરવાની મેથડ (C# થી)
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
             }
         }
 
@@ -162,9 +179,8 @@ namespace WebApplication2
 
                 ShowSuccess("Profile updated successfully!");
 
-                // redirect after 2 seconds
-                string script = "setTimeout(function(){ window.location.href='Profile.aspx'; }, 2000);";
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "redirect", script, true);
+                // ⭐ JavaScript વગર રીડાયરેક્ટ — C# થી જ
+                Response.Redirect("Profile.aspx");
             }
             catch (Exception ex)
             {
