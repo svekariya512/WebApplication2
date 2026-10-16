@@ -1,6 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace WebApplication2
 {
@@ -8,11 +9,24 @@ namespace WebApplication2
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                SetHeaderTitle("Reset Password");
+            }
         }
 
-        // =========================================
-        // RESET PASSWORD — C# VALIDATION ONLY
-        // =========================================
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
+            }
+        }
+
         protected void btnReset_Click(object sender, EventArgs e)
         {
             lblMsg.Visible = false;
