@@ -1,5 +1,6 @@
 using System;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace WebApplication2
 {
@@ -37,7 +38,23 @@ namespace WebApplication2
         {
             if (!IsPostBack)
             {
+                // ⭐ હેડરમાં "Profile Management" સેટ કરવા માટે
+                SetHeaderTitle("Profile Management");
+
                 LoadAdmin();
+            }
+        }
+
+        // ⭐ હેડર ટાઈટલ સેટ કરવાની મેથડ (C# થી)
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
             }
         }
 
@@ -83,9 +100,6 @@ namespace WebApplication2
     // =========================================
     // ADMIN DATA — only defined here (one place)
     // =========================================
-    // =========================================
-    // ADMIN DATA — only defined here (one place)
-    // =========================================
     public class AdminData
     {
         public int Id { get; set; }
@@ -99,5 +113,4 @@ namespace WebApplication2
         public DateTime? BirthDate { get; set; }
         public DateTime CreatedAt { get; set; }
     }
-
 }
