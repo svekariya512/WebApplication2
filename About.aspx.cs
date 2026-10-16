@@ -40,7 +40,23 @@ namespace WebApplication2
         {
             if (!IsPostBack)
             {
+                // ⭐ હેડરમાં "About Management" સેટ કરવા માટે
+                SetHeaderTitle("About Management");
+
                 LoadAll();
+            }
+        }
+
+        // ⭐ હેડર ટાઈટલ સેટ કરવાની મેથડ (C# થી)
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
             }
         }
 
@@ -135,15 +151,12 @@ namespace WebApplication2
             string amenities = txtItemAmenities.Text.Trim();
 
             // ===== VALIDATION =====
-
-            // 1. Category empty
             if (string.IsNullOrEmpty(category))
             {
                 ShowValidation("Invalid operation. Please reopen the form.");
                 return;
             }
 
-            // 2. Category valid
             string[] validCategories = { "HeroStory", "Quality", "Theater" };
             if (Array.IndexOf(validCategories, category) < 0)
             {
@@ -151,91 +164,76 @@ namespace WebApplication2
                 return;
             }
 
-            // 3. Name empty
             if (string.IsNullOrEmpty(name))
             {
                 ShowValidation("Name / Title is required.");
                 return;
             }
 
-            // 4. Name min length
             if (name.Length < 2)
             {
                 ShowValidation("Name must be at least 2 characters.");
                 return;
             }
 
-            // 5. Name max length
             if (name.Length > 100)
             {
                 ShowValidation("Name cannot exceed 100 characters.");
                 return;
             }
 
-            // 6. Name invalid characters
             if (!Regex.IsMatch(name, @"^[\p{L}\p{N}\s.\-&',()]+$"))
             {
                 ShowValidation("Name contains invalid characters.");
                 return;
             }
 
-            // ===== HERO / QUALITY VALIDATION =====
             if (category == "HeroStory" || category == "Quality")
             {
-                // 7. Content empty
                 if (string.IsNullOrEmpty(content))
                 {
                     ShowValidation("Content / Description is required.");
                     return;
                 }
 
-                // 8. Content min length
                 if (content.Length < 3)
                 {
                     ShowValidation("Content must be at least 3 characters.");
                     return;
                 }
 
-                // 9. Content max length
                 if (content.Length > 1000)
                 {
                     ShowValidation("Content cannot exceed 1000 characters.");
                     return;
                 }
             }
-
-            // ===== THEATER VALIDATION =====
             else if (category == "Theater")
             {
-                // 10. Location empty
                 if (string.IsNullOrEmpty(content))
                 {
                     ShowValidation("Location is required.");
                     return;
                 }
 
-                // 11. Location min length
                 if (content.Length < 2)
                 {
                     ShowValidation("Location must be at least 2 characters.");
                     return;
                 }
 
-                // 12. Location max length
                 if (content.Length > 200)
                 {
                     ShowValidation("Location cannot exceed 200 characters.");
                     return;
                 }
 
-                // 13. Amenities empty
                 if (string.IsNullOrEmpty(amenities))
                 {
                     ShowValidation("Amenities are required.");
                     return;
                 }
 
-                // 14. Amenities max length
                 if (amenities.Length > 300)
                 {
                     ShowValidation("Amenities cannot exceed 300 characters.");
@@ -250,7 +248,6 @@ namespace WebApplication2
 
                 if (!string.IsNullOrEmpty(editId))
                 {
-                    // UPDATE
                     int id = Convert.ToInt32(editId);
                     AboutItem item = items.Find(x => x.Id == id);
                     if (item != null)
@@ -262,7 +259,6 @@ namespace WebApplication2
                 }
                 else
                 {
-                    // INSERT
                     int newId = 1;
                     foreach (AboutItem i in items)
                     {
@@ -286,8 +282,8 @@ namespace WebApplication2
 
                 LoadAll();
 
-                string script = "setTimeout(function(){ document.getElementById('AboutModal').classList.remove('show'); }, 1000);";
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "closeModal", script, true);
+                // ⭐ JavaScript વગર મોડલ બંધ કરવા માટે C# થી ક્લાસ બદલો
+                AboutModal.CssClass = "modal-overlay";
             }
             catch (Exception ex)
             {
