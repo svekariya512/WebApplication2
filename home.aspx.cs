@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -52,8 +52,24 @@ namespace WebApplication2
         {
             if (!IsPostBack)
             {
+                // ⭐ હેડરમાં "Global Oversight" સેટ કરવા માટે
+                SetHeaderTitle("Global Oversight");
+
                 LoadMovies();
                 LoadHeroContent();
+            }
+        }
+
+        // ⭐ હેડર ટાઈટલ સેટ કરવાની મેથડ (C# થી)
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
             }
         }
 
@@ -67,6 +83,45 @@ namespace WebApplication2
         {
             rptHero.DataSource = HeroItems;
             rptHero.DataBind();
+        }
+
+        // =========================================
+        // ⭐ ADD MOVIE (JavaScript વગર)
+        // =========================================
+        protected void btnAddMovie_Click(object sender, EventArgs e)
+        {
+            // ફોર્મ ખાલી કરો
+            txtMovieTitle.Text = "";
+            txtMovieRating.Text = "";
+            hdnEditMovieId.Value = "";
+
+            // મોડલ ટાઈટલ અને બટન સેટ કરો
+            MovieModalTitle.Text = "Add New Movie";
+            btnSaveMovie.Text = "Save Movie";
+
+            // મોડલ ખોલો (CSS ક્લાસ થી)
+            MovieModal.CssClass = "movie-modal-overlay show";
+        }
+
+        // =========================================
+        // ⭐ ADD HERO (JavaScript વગર)
+        // =========================================
+        protected void btnAddHero_Click(object sender, EventArgs e)
+        {
+            // ફોર્મ ખાલી કરો
+            txtHeroBrand.Text = "";
+            txtHeroTitle.Text = "";
+            txtHeroDesc.Text = "";
+            ddlHeroStatus.SelectedValue = "Active";
+            ddlHeroPosition.SelectedValue = "Featured";
+            hdnEditHeroId.Value = "";
+
+            // મોડલ ટાઈટલ અને બટન સેટ કરો
+            HeroModalTitle.Text = "Add New Hero Content";
+            btnSaveHero.Text = "Save Hero";
+
+            // મોડલ ખોલો (CSS ક્લાસ થી)
+            HeroModal.CssClass = "movie-modal-overlay show";
         }
 
         // =========================================
@@ -107,9 +162,8 @@ namespace WebApplication2
 
             Movies = movies;
 
-            string script = "alert('Movie saved successfully!');" +
-                            "document.getElementById('MovieModal').classList.remove('show');";
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "movieSaved", script, true);
+            // JavaScript વગર મોડલ બંધ કરવા માટે C# થી ક્લાસ બદલો
+            MovieModal.CssClass = "movie-modal-overlay";
 
             txtMovieTitle.Text = "";
             txtMovieRating.Text = "";
@@ -169,9 +223,8 @@ namespace WebApplication2
 
             HeroItems = heroes;
 
-            string script = "alert('Hero content saved successfully!');" +
-                            "document.getElementById('HeroModal').classList.remove('show');";
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "heroSaved", script, true);
+            // JavaScript વગર મોડલ બંધ કરવા માટે C# થી ક્લાસ બદલો
+            HeroModal.CssClass = "movie-modal-overlay";
 
             txtHeroBrand.Text = "";
             txtHeroTitle.Text = "";
@@ -204,10 +257,10 @@ namespace WebApplication2
                     txtMovieRating.Text = m.Rating;
                     hdnEditMovieId.Value = m.Id.ToString();
 
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "openEditMovie",
-                        "var p=document.getElementById('MovieModal');p.classList.add('show');" +
-                        "document.getElementById('MovieModalTitle').innerText='Edit Movie';" +
-                        "document.getElementById('btnSaveMovie').value='Save Changes';", true);
+                    // JavaScript વગર મોડલ ખોલવા માટે C# થી ક્લાસ બદલો
+                    MovieModal.CssClass = "movie-modal-overlay show";
+                    MovieModalTitle.Text = "Edit Movie";
+                    btnSaveMovie.Text = "Save Changes";
                 }
             }
         }
@@ -238,10 +291,10 @@ namespace WebApplication2
                     ddlHeroPosition.SelectedValue = h.Position;
                     hdnEditHeroId.Value = h.Id.ToString();
 
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "openEditHero",
-                        "var p=document.getElementById('HeroModal');p.classList.add('show');" +
-                        "document.getElementById('HeroModalTitle').innerText='Edit Hero Content';" +
-                        "document.getElementById('btnSaveHero').value='Save Changes';", true);
+                    // JavaScript વગર મોડલ ખોલવા માટે C# થી ક્લાસ બદલો
+                    HeroModal.CssClass = "movie-modal-overlay show";
+                    HeroModalTitle.Text = "Edit Hero Content";
+                    btnSaveHero.Text = "Save Changes";
                 }
             }
         }
