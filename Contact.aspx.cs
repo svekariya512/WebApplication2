@@ -34,8 +34,24 @@ namespace WebApplication2
         {
             if (!IsPostBack)
             {
+                // ⭐ હેડરમાં "Contact Management" સેટ કરવા માટે
+                SetHeaderTitle("Contact Management");
+
                 LoadContacts();
                 LoadStats();
+            }
+        }
+
+        // ⭐ હેડર ટાઈટલ સેટ કરવાની મેથડ (C# થી)
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
             }
         }
 
