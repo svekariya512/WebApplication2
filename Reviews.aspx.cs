@@ -30,9 +30,9 @@ namespace WebApplication2
                 {
                     Session["ReviewList"] = new List<ReviewItem>
                     {
-                        new ReviewItem { Id = 1, UserName = "Raj Patel", UserEmail = "raj@test.com", MovieName = "Inception", Rating = 5, ReviewText = "Mind-blowing movie! Highly recommended.", Status = "Approved", CreatedAt = DateTime.Now.AddDays(-2) },
-                        new ReviewItem { Id = 2, UserName = "Priya Shah", UserEmail = "priya@test.com", MovieName = "Interstellar", Rating = 5, ReviewText = "Amazing visuals and story.", Status = "Pending", CreatedAt = DateTime.Now.AddDays(-1) },
-                        new ReviewItem { Id = 3, UserName = "Amit Kumar", UserEmail = "amit@test.com", MovieName = "The Dark Knight", Rating = 5, ReviewText = "Best superhero movie ever!", Status = "Approved", CreatedAt = DateTime.Now.AddDays(-3) },
+                        new ReviewItem { Id = 1, UserName = "shreeya vekariya", UserEmail = "S@test.com", MovieName = "Inception", Rating = 5, ReviewText = "Mind-blowing movie! Highly recommended.", Status = "Approved", CreatedAt = DateTime.Now.AddDays(-2) },
+                        new ReviewItem { Id = 2, UserName = "mitu uteriya", UserEmail = "m@test.com", MovieName = "Interstellar", Rating = 5, ReviewText = "Amazing visuals and story.", Status = "Pending", CreatedAt = DateTime.Now.AddDays(-1) },
+                        new ReviewItem { Id = 3, UserName = "jaldhara jadav", UserEmail = "j@test.com", MovieName = "The Dark Knight", Rating = 5, ReviewText = "Best superhero movie ever!", Status = "Approved", CreatedAt = DateTime.Now.AddDays(-3) },
                         new ReviewItem { Id = 4, UserName = "Sneha Joshi", UserEmail = "sneha@test.com", MovieName = "Dune", Rating = 4, ReviewText = "Great cinematography.", Status = "Flagged", CreatedAt = DateTime.Now.AddDays(-5) }
                     };
                 }
