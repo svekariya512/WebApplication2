@@ -1,46 +1,33 @@
-﻿using System;
+using System;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace WebApplication2
 {
     public partial class Settings : System.Web.UI.Page
     {
-        // =========================================
-        // IN-MEMORY SETTINGS DATA
-        // =========================================
-        private SettingsData Config
-        {
-            get
-            {
-                if (Session["SettingsData"] == null)
-                {
-                    Session["SettingsData"] = new SettingsData
-                    {
-                        CinemaName = "CinePulse Global",
-                        Headquarters = "Rajkot, Gujarat",
-                        Timezone = "IST",
-                        Currency = "INR",
-                        SessionTimeout = 30,
-                        DashboardTheme = "CinematicDark",
-                        SystemLanguage = "en-US",
-                        FooterMessage = "System maintenance scheduled for Sunday 02:00 AM IST.",
-                        SystemAlerts = true,
-                        DailySms = true,
-                        AdminPush = false,
-                        Marketing = false,
-                        TwoFactor = true
-                    };
-                }
-                return (SettingsData)Session["SettingsData"];
-            }
-            set { Session["SettingsData"] = value; }
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
+                // ⭐ હેડરમાં "Settings" સેટ કરવા માટે
+                SetHeaderTitle("Settings");
+
+                // ⭐ સેટિંગ્સ લોડ કરો
                 LoadSettings();
+            }
+        }
+
+        // ⭐ હેડર ટાઈટલ સેટ કરવાની મેથડ (C# થી)
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
             }
         }
 
@@ -49,213 +36,102 @@ namespace WebApplication2
         // =========================================
         private void LoadSettings()
         {
-            try
-            {
-                SettingsData c = Config;
+            // સેશનમાંથી સેટિંગ્સ લોડ કરો, જો ન હોય તો ડિફોલ્ટ વેલ્યુ
+            txtCinemaName.Text = Session["CinemaName"] as string ?? "CinePulse Global";
+            txtHeadquarters.Text = Session["Headquarters"] as string ?? "Rajkot, Gujarat";
+            txtSessionTimeout.Text = Session["SessionTimeout"] as string ?? "30";
+            txtFooterMessage.Text = Session["FooterMessage"] as string ?? "System maintenance scheduled for Sunday 02:00 AM IST. Expect minor disruptions.";
 
-                txtCinemaName.Text = c.CinemaName;
-                txtHeadquarters.Text = c.Headquarters;
-                txtSessionTimeout.Text = c.SessionTimeout.ToString();
-                txtFooterMessage.Text = c.FooterMessage;
+            chkSystemAlerts.Checked = Session["SystemAlerts"] == null ? true : (bool)Session["SystemAlerts"];
+            chkDailySms.Checked = Session["DailySms"] == null ? true : (bool)Session["DailySms"];
+            chkAdminPush.Checked = Session["AdminPush"] == null ? false : (bool)Session["AdminPush"];
+            chkMarketing.Checked = Session["Marketing"] == null ? false : (bool)Session["Marketing"];
 
-                if (ddlTimezone.Items.FindByValue(c.Timezone) != null)
-                    ddlTimezone.SelectedValue = c.Timezone;
+            chkTwoFactor.Checked = Session["TwoFactor"] == null ? true : (bool)Session["TwoFactor"];
 
-                if (ddlCurrency.Items.FindByValue(c.Currency) != null)
-                    ddlCurrency.SelectedValue = c.Currency;
+            if (Session["Timezone"] != null)
+                ddlTimezone.SelectedValue = Session["Timezone"].ToString();
 
-                if (ddlDashboardTheme.Items.FindByValue(c.DashboardTheme) != null)
-                    ddlDashboardTheme.SelectedValue = c.DashboardTheme;
+            if (Session["Currency"] != null)
+                ddlCurrency.SelectedValue = Session["Currency"].ToString();
 
-                if (ddlSystemLanguage.Items.FindByValue(c.SystemLanguage) != null)
-                    ddlSystemLanguage.SelectedValue = c.SystemLanguage;
+            if (Session["DashboardTheme"] != null)
+                ddlDashboardTheme.SelectedValue = Session["DashboardTheme"].ToString();
 
-                chkSystemAlerts.Checked = c.SystemAlerts;
-                chkDailySms.Checked = c.DailySms;
-                chkAdminPush.Checked = c.AdminPush;
-                chkMarketing.Checked = c.Marketing;
-                hdnTwoFactor.Value = c.TwoFactor.ToString().ToLower();
-            }
-            catch (Exception ex)
-            {
-                SetDefaultValues();
-                System.Diagnostics.Debug.WriteLine("Load error: " + ex.Message);
-            }
-        }
-
-        private void SetDefaultValues()
-        {
-            txtCinemaName.Text = "CinePulse Global";
-            txtHeadquarters.Text = "Rajkot, Gujarat";
-            txtSessionTimeout.Text = "30";
-            txtFooterMessage.Text = "System maintenance scheduled for Sunday 02:00 AM IST.";
-            chkSystemAlerts.Checked = true;
-            chkDailySms.Checked = true;
-            chkAdminPush.Checked = false;
-            chkMarketing.Checked = false;
-            hdnTwoFactor.Value = "true";
+            if (Session["SystemLanguage"] != null)
+                ddlSystemLanguage.SelectedValue = Session["SystemLanguage"].ToString();
         }
 
         // =========================================
-        // SAVE WITH C# VALIDATION
+        // SAVE CONFIGURATION
         // =========================================
-        protected void btnSaveConfiguration_Click(object sender, EventArgs e)
+        protected void btnSave_Click(object sender, EventArgs e)
         {
-            lblSessionError.Visible = false;
-            lblFooterError.Visible = false;
-            lblSettingsMessage.Visible = false;
-
-            string cinemaName = txtCinemaName.Text.Trim();
-            string headquarters = txtHeadquarters.Text.Trim();
-            string timezone = ddlTimezone.SelectedValue;
-            string currency = ddlCurrency.SelectedValue;
-            string sessionTimeout = txtSessionTimeout.Text.Trim();
-            string dashboardTheme = ddlDashboardTheme.SelectedValue;
-            string systemLanguage = ddlSystemLanguage.SelectedValue;
-            string footerMessage = txtFooterMessage.Text.Trim();
-            bool twoFactor = hdnTwoFactor.Value.ToLower() == "true";
-
-            // ==================== VALIDATION ====================
-
-            if (string.IsNullOrEmpty(cinemaName))
+            // વેલિડેશન
+            if (string.IsNullOrEmpty(txtCinemaName.Text.Trim()))
             {
-                ShowError("Cinema Name is required.");
+                ShowMessage("Cinema Name is required.", false);
                 return;
             }
 
-            if (cinemaName.Length < 2 || cinemaName.Length > 100)
+            if (string.IsNullOrEmpty(txtHeadquarters.Text.Trim()))
             {
-                ShowError("Cinema Name must be between 2 and 100 characters.");
+                ShowMessage("Headquarters Location is required.", false);
                 return;
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(cinemaName, @"^[a-zA-Z0-9\s&.\-]+$"))
+            int timeout;
+            if (!int.TryParse(txtSessionTimeout.Text.Trim(), out timeout) || timeout < 1 || timeout > 1440)
             {
-                ShowError("Cinema Name contains invalid characters.");
+                ShowMessage("Session Timeout must be between 1 and 1440 minutes.", false);
                 return;
             }
 
-            if (string.IsNullOrEmpty(headquarters))
+            if (txtFooterMessage.Text.Length > 150)
             {
-                ShowError("Headquarters Location is required.");
+                ShowMessage("Footer Message cannot exceed 150 characters.", false);
                 return;
             }
 
-            if (headquarters.Length < 2 || headquarters.Length > 100)
-            {
-                ShowError("Headquarters must be between 2 and 100 characters.");
-                return;
-            }
+            // સેશનમાં સેવ કરો
+            Session["CinemaName"] = txtCinemaName.Text.Trim();
+            Session["Headquarters"] = txtHeadquarters.Text.Trim();
+            Session["SessionTimeout"] = txtSessionTimeout.Text.Trim();
+            Session["FooterMessage"] = txtFooterMessage.Text.Trim();
 
-            if (string.IsNullOrEmpty(timezone))
-            {
-                ShowError("Please select a Timezone.");
-                return;
-            }
+            Session["SystemAlerts"] = chkSystemAlerts.Checked;
+            Session["DailySms"] = chkDailySms.Checked;
+            Session["AdminPush"] = chkAdminPush.Checked;
+            Session["Marketing"] = chkMarketing.Checked;
 
-            if (string.IsNullOrEmpty(currency))
-            {
-                ShowError("Please select a Currency.");
-                return;
-            }
+            Session["TwoFactor"] = chkTwoFactor.Checked;
 
-            if (string.IsNullOrEmpty(sessionTimeout))
-            {
-                lblSessionError.Text = "Session Timeout is required.";
-                lblSessionError.Visible = true;
-                return;
-            }
+            Session["Timezone"] = ddlTimezone.SelectedValue;
+            Session["Currency"] = ddlCurrency.SelectedValue;
+            Session["DashboardTheme"] = ddlDashboardTheme.SelectedValue;
+            Session["SystemLanguage"] = ddlSystemLanguage.SelectedValue;
 
-            int timeoutValue;
-            if (!int.TryParse(sessionTimeout, out timeoutValue))
-            {
-                lblSessionError.Text = "Session Timeout must be a number.";
-                lblSessionError.Visible = true;
-                return;
-            }
-
-            if (timeoutValue < 5 || timeoutValue > 1440)
-            {
-                lblSessionError.Text = "Session Timeout must be between 5 and 1440 minutes.";
-                lblSessionError.Visible = true;
-                return;
-            }
-
-            if (string.IsNullOrEmpty(dashboardTheme))
-            {
-                ShowError("Please select a Dashboard Theme.");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(systemLanguage))
-            {
-                ShowError("Please select a System Language.");
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(footerMessage) && footerMessage.Length > 150)
-            {
-                lblFooterError.Text = "Footer message cannot exceed 150 characters.";
-                lblFooterError.Visible = true;
-                return;
-            }
-
-            // ==================== SAVE TO SESSION ====================
-            try
-            {
-                SettingsData c = Config;
-
-                c.CinemaName = cinemaName;
-                c.Headquarters = headquarters;
-                c.Timezone = timezone;
-                c.Currency = currency;
-                c.SessionTimeout = timeoutValue;
-                c.DashboardTheme = dashboardTheme;
-                c.SystemLanguage = systemLanguage;
-                c.FooterMessage = footerMessage ?? "";
-                c.SystemAlerts = chkSystemAlerts.Checked;
-                c.DailySms = chkDailySms.Checked;
-                c.AdminPush = chkAdminPush.Checked;
-                c.Marketing = chkMarketing.Checked;
-                c.TwoFactor = twoFactor;
-
-                Config = c;
-
-                lblSettingsMessage.Text = "Configuration saved successfully.";
-                lblSettingsMessage.ForeColor = System.Drawing.Color.FromArgb(127, 224, 155);
-                lblSettingsMessage.Visible = true;
-            }
-            catch (Exception ex)
-            {
-                ShowError("Save error: " + ex.Message);
-            }
+            ShowMessage("Configuration saved successfully.", true);
         }
 
-        private void ShowError(string message)
+        // =========================================
+        // DISCARD CHANGES
+        // =========================================
+        protected void btnDiscard_Click(object sender, EventArgs e)
         {
-            lblSettingsMessage.Text = message;
-            lblSettingsMessage.ForeColor = System.Drawing.Color.FromArgb(255, 102, 102);
-            lblSettingsMessage.Visible = true;
+            // ફોર્મ રીલોડ કરો (જૂની વેલ્યુ સાથે)
+            LoadSettings();
+            ShowMessage("Changes discarded.", true);
         }
-    }
 
-    // =========================================
-    // MODEL CLASS
-    // =========================================
-    public class SettingsData
-    {
-        public string CinemaName { get; set; }
-        public string Headquarters { get; set; }
-        public string Timezone { get; set; }
-        public string Currency { get; set; }
-        public int SessionTimeout { get; set; }
-        public string DashboardTheme { get; set; }
-        public string SystemLanguage { get; set; }
-        public string FooterMessage { get; set; }
-        public bool SystemAlerts { get; set; }
-        public bool DailySms { get; set; }
-        public bool AdminPush { get; set; }
-        public bool Marketing { get; set; }
-        public bool TwoFactor { get; set; }
+        // =========================================
+        // SHOW MESSAGE
+        // =========================================
+        private void ShowMessage(string message, bool success)
+        {
+            lblMessage.Text = message;
+            lblMessage.Visible = true;
+            lblMessage.CssClass = success ? "settings-message" : "settings-message error";
+        }
     }
 }
