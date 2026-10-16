@@ -49,8 +49,24 @@ namespace WebApplication2
         {
             if (!IsPostBack)
             {
+                // ⭐ હેડરમાં "Payment Transactions" સેટ કરવા માટે
+                SetHeaderTitle("Payment Transactions");
+
                 LoadBookings();
                 LoadStats();
+            }
+        }
+
+        // ⭐ હેડર ટાઈટલ સેટ કરવાની મેથડ (C# થી)
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
             }
         }
 
@@ -64,11 +80,9 @@ namespace WebApplication2
 
             foreach (BookingItem b in BookingList)
             {
-                // Status filter
                 if (CurrentFilter != "ALL" && b.Status != CurrentFilter)
                     continue;
 
-                // Search filter
                 if (!string.IsNullOrEmpty(search))
                 {
                     if (!b.BookingId.ToLower().Contains(search) &&
@@ -79,7 +93,6 @@ namespace WebApplication2
                 filtered.Add(b);
             }
 
-            // Pagination
             int totalItems = filtered.Count;
             int totalPages = Math.Max(1, (int)Math.Ceiling((double)totalItems / PageSize));
 
@@ -133,24 +146,20 @@ namespace WebApplication2
         {
             string search = txtBookingSearch.Text.Trim();
 
-            // ===== VALIDATION =====
             if (!string.IsNullOrEmpty(search))
             {
-                // Min length
                 if (search.Length < 2)
                 {
                     ShowMessage("Search term must be at least 2 characters.");
                     return;
                 }
 
-                // Max length
                 if (search.Length > 50)
                 {
                     ShowMessage("Search term cannot exceed 50 characters.");
                     return;
                 }
 
-                // Only valid characters
                 if (!Regex.IsMatch(search, @"^[a-zA-Z0-9\s\-]+$"))
                 {
                     ShowMessage("Search contains invalid characters.");
@@ -215,7 +224,6 @@ namespace WebApplication2
             BookingItem b = list.Find(x => x.Id == id);
             if (b == null) return;
 
-            // ===== VIEW =====
             if (e.CommandName == "ViewBooking")
             {
                 txtViewBookingId.Text = b.BookingId;
@@ -229,10 +237,8 @@ namespace WebApplication2
 
                 BookingModal.CssClass = "booking-modal-overlay show";
             }
-            // ===== DELETE =====
             else if (e.CommandName == "DeleteBooking")
             {
-                // ===== VALIDATION =====
                 if (b.BookingId.Length < 5)
                 {
                     ShowMessage("Invalid booking ID.");
@@ -265,8 +271,9 @@ namespace WebApplication2
             lblMessage.Text = message;
             lblMessage.Visible = true;
 
-            string script = "setTimeout(function(){ var m=document.getElementById('" + lblMessage.ClientID + "'); if(m) m.style.display='none'; }, 3000);";
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "hideMsg", script, true);
+            // ⭐ JavaScript વગર મેસેજ દેખાડો — C# થી જ
+            // મેસેજ દેખાશે, પણ આપોઆપ Hide નહીં થાય.
+            // Hide કરવા માટે પેજ રીફ્રેશ કરો.
         }
     }
 
