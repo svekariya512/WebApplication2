@@ -1,4 +1,4 @@
-<%@ Page Title="Theater" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="theater.aspx.cs" Inherits="WebApplication2.theater" %>
+<%@ Page Title="Theater Management" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="theater.aspx.cs" Inherits="WebApplication2.theater" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 
@@ -118,7 +118,6 @@
         font-weight: 500;
     }
 
-    /* preview of comfort card image inside table */
     .comfort-thumb {
         width: 78px;
         height: 42px;
@@ -467,7 +466,7 @@
 
 
     <!-- ==================================================
-         SECTION 4: UNCOMPROMISED COMFORT (Admin Table)
+         SECTION 4: UNCOMPROMISED COMFORT
     ================================================== -->
     <div class="theater-section">
         <div class="section-header">
