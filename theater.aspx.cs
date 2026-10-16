@@ -75,9 +75,6 @@ namespace WebApplication2
             set { Session["SignatureList"] = value; }
         }
 
-        // =========================================
-        // COMFORT FEATURES
-        // =========================================
         private List<ComfortItem> ComfortList
         {
             get
@@ -121,7 +118,23 @@ namespace WebApplication2
         {
             if (!IsPostBack)
             {
+                // ⭐ હેડરમાં "Theater" સેટ કરવા માટે
+                SetHeaderTitle("Theater Management");
+
                 LoadAll();
+            }
+        }
+
+        // ⭐ હેડર ટાઈટલ સેટ કરવાની મેથડ (C# થી)
+        private void SetHeaderTitle(string title)
+        {
+            if (this.Master != null)
+            {
+                Label lbl = this.Master.FindControl("lblPageTitle") as Label;
+                if (lbl != null)
+                {
+                    lbl.Text = title;
+                }
             }
         }
 
