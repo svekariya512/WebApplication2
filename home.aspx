@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Dashboard" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="home.aspx.cs" Inherits="WebApplication2.home" %>
+<%@ Page Title="Global Oversight" Language="C#" MasterPageFile="~/Site1.Master" AutoEventWireup="true" CodeBehind="home.aspx.cs" Inherits="WebApplication2.home" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 
@@ -251,7 +251,9 @@
             </div>
             <div class="header-actions">
                 <a href="Movies.aspx" class="view-all">View All →</a>
-                <button type="button" class="add-btn" onclick="openMovieAdd();">+ Add Movie</button>
+                <!-- ⭐ JavaScript વગર Add Movie બટન — C# થી ખુલશે -->
+                <asp:Button ID="btnAddMovie" runat="server" CssClass="add-btn" Text="+ Add Movie"
+                    OnClick="btnAddMovie_Click" CausesValidation="false" />
             </div>
         </div>
 
@@ -277,9 +279,9 @@
                             <td>
                                 <div class="actions">
                                     <asp:LinkButton runat="server" CssClass="btn-edit" Text="EDIT"
-                                        CommandName="EditMovie" CommandArgument='<%# Eval("Id") %>' />
+                                        CommandName="EditMovie" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
                                     <asp:LinkButton runat="server" CssClass="btn-delete" Text="DELETE"
-                                        CommandName="DeleteMovie" CommandArgument='<%# Eval("Id") %>'
+                                        CommandName="DeleteMovie" CommandArgument='<%# Eval("Id") %>' CausesValidation="false"
                                         OnClientClick="return confirm('Delete this movie?');" />
                                 </div>
                             </td>
@@ -301,7 +303,9 @@
                 <p>Manage featured cinematic assets and promotional banners</p>
             </div>
             <div class="header-actions">
-                <button type="button" class="add-btn" onclick="openHeroAdd();">+ Add Hero</button>
+                <!-- ⭐ JavaScript વગર Add Hero બટન — C# થી ખુલશે -->
+                <asp:Button ID="btnAddHero" runat="server" CssClass="add-btn" Text="+ Add Hero"
+                    OnClick="btnAddHero_Click" CausesValidation="false" />
             </div>
         </div>
 
@@ -340,9 +344,9 @@
                             <td>
                                 <div class="actions">
                                     <asp:LinkButton runat="server" CssClass="btn-edit" Text="EDIT"
-                                        CommandName="EditHero" CommandArgument='<%# Eval("Id") %>' />
+                                        CommandName="EditHero" CommandArgument='<%# Eval("Id") %>' CausesValidation="false" />
                                     <asp:LinkButton runat="server" CssClass="btn-delete" Text="DELETE"
-                                        CommandName="DeleteHero" CommandArgument='<%# Eval("Id") %>'
+                                        CommandName="DeleteHero" CommandArgument='<%# Eval("Id") %>' CausesValidation="false"
                                         OnClientClick="return confirm('Delete this hero?');" />
                                 </div>
                             </td>
@@ -484,64 +488,5 @@
 
     </div>
 </asp:Panel>
-
-
-<script type="text/javascript">
-    function openMovieAdd() {
-        var p = document.getElementById("MovieModal");
-        if (p) {
-            p.classList.add("show");
-            document.getElementById("MovieModalTitle").innerText = "Add New Movie";
-            document.getElementById("btnSaveMovie").value = "Save Movie";
-            document.getElementById("hdnEditMovieId").value = "";
-            document.getElementById("txtMovieTitle").value = "";
-            document.getElementById("txtMovieRating").value = "";
-            setTimeout(function () {
-                var t = document.getElementById("txtMovieTitle");
-                if (t) t.focus();
-            }, 100);
-        }
-    }
-
-    function openHeroAdd() {
-        var p = document.getElementById("HeroModal");
-        if (p) {
-            p.classList.add("show");
-            document.getElementById("HeroModalTitle").innerText = "Add New Hero Content";
-            document.getElementById("btnSaveHero").value = "Save Hero";
-            document.getElementById("hdnEditHeroId").value = "";
-            document.getElementById("txtHeroBrand").value = "";
-            document.getElementById("txtHeroTitle").value = "";
-            document.getElementById("txtHeroDesc").value = "";
-            document.getElementById("ddlHeroStatus").value = "Active";
-            document.getElementById("ddlHeroPosition").value = "Featured";
-            setTimeout(function () {
-                var t = document.getElementById("txtHeroBrand");
-                if (t) t.focus();
-            }, 100);
-        }
-    }
-
-    document.addEventListener("click", function (event) {
-        var movieModal = document.getElementById("MovieModal");
-        var heroModal = document.getElementById("HeroModal");
-
-        if (event.target === movieModal) {
-            movieModal.classList.remove("show");
-        }
-        if (event.target === heroModal) {
-            heroModal.classList.remove("show");
-        }
-    });
-
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            var movieModal = document.getElementById("MovieModal");
-            var heroModal = document.getElementById("HeroModal");
-            if (movieModal) movieModal.classList.remove("show");
-            if (heroModal) heroModal.classList.remove("show");
-        }
-    });
-</script>
 
 </asp:Content>
